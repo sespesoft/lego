@@ -18,9 +18,14 @@ services:
       - AWS_DEFAULT_REGION=${AWS_REGION}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET}
       - AWS_ACCESS_KEY_ID=${AWS_KEY}
+      - MQ_USER=${MQ_USER}
+      - MQ_PASSWORD=${MQ_PASSWORD}
+      - MQ_HOST=${MQ_HOST}
+      - MQ_PORT=${MQ_PORT}
     restart: always
     labels:
       - traefik.enable=true
+      - traefik.http.services.hiring.loadbalancer.server.port=80
       - traefik.http.routers.hiring.rule=Host(`hiring.${DOMAIN}`)
       - traefik.http.routers.hiring.entrypoints=web
 
@@ -37,8 +42,16 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - PATH_PUBLICKEY=${PUB_KEY}
+      - MQ_USER=${MQ_USER}
+      - MQ_PASSWORD=${MQ_PASSWORD}
+      - MQ_HOST=${MQ_HOST}
+      - MQ_PORT=${MQ_PORT}
+    user: application
     entrypoint: /bin/bash
     command:
       - -c
-      - php app/ice dbup --schema=[!t]* --tag=hiring
+      - |
+        php app/ice dbup --schema=[!t]* --tag=hiring
+        php app/ice configure-rabbitmq
+        php app/ice generate-supervisor
     restart: on-failure

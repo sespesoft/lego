@@ -14,9 +14,14 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - PATH_PUBLICKEY=${PUB_KEY}
+      - MQ_USER=${MQ_USER}
+      - MQ_PASSWORD=${MQ_PASSWORD}
+      - MQ_HOST=${MQ_HOST}
+      - MQ_PORT=${MQ_PORT}
     restart: always
     labels:
       - traefik.enable=true
+      - traefik.http.services.pga.loadbalancer.server.port=80
       - traefik.http.routers.pga.rule=Host(`pgaudit.${DOMAIN}`)
       - traefik.http.routers.pga.entrypoints=web
 
@@ -33,10 +38,17 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - PATH_PUBLICKEY=${PUB_KEY}
+      - MQ_USER=${MQ_USER}
+      - MQ_PASSWORD=${MQ_PASSWORD}
+      - MQ_HOST=${MQ_HOST}
+      - MQ_PORT=${MQ_PORT}
     entrypoint: /bin/bash
+    user: application
     command:
       - -c
       - |
         set -e
         php app/ice dbup --schema=[!t]* --tag=pgaudit
+        php app/ice configure-rabbitmq
+        php app/ice generate-supervisor
     restart: on-failure

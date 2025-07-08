@@ -24,6 +24,7 @@ services:
     restart: always
     labels:
       - traefik.enable=true
+      - traefik.http.services.pqr.loadbalancer.server.port=80
       - traefik.http.routers.pqr.rule=Host(`pqrs.${DOMAIN}`)
       - traefik.http.routers.pqr.entrypoints=web
 
@@ -45,9 +46,12 @@ services:
       - MQ_HOST=${MQ_HOST}
       - MQ_PORT=${MQ_PORT}
     entrypoint: /bin/bash
+    user: application
     command:
       - -c
       - |
         set -e
         php app/ice dbup --schema=[!t]* --tag=pqrs
+        php app/ice configure-rabbitmq
+        php app/ice generate-supervisor
     restart: on-failure
