@@ -1,0 +1,68 @@
+x-common-config: &job-config
+  depends_on:
+    db:
+      condition: service_healthy
+    rabbitmq:
+      condition: service_healthy
+services:
+  webapp:
+    build:
+      context: ../../../webapp
+      additional_contexts:
+        - assets=../../../_assets
+    labels:
+      - traefik.http.routers.webapp.entrypoints=web
+  audit:
+    build:
+      context: ../../../audit
+    labels:
+      - traefik.http.routers.audit.entrypoints=web
+  audit_conf:
+    build:
+      context: ../../../audit
+    <<: *job-config
+  auth:
+    build:
+      context: ../../../auth
+    labels:
+      - traefik.http.routers.auth.entrypoints=web
+  auth_conf:
+    build:
+      context: ../../../auth
+    <<: *job-config
+  geo:
+    build:
+      context: ../../../geo
+    labels:
+      - traefik.http.routers.geo.entrypoints=web
+  geo_conf:
+    build:
+      context: ../../../geo
+    <<: *job-config
+  hiring:
+    build:
+      context: ../../../hiring
+    labels:
+      - traefik.http.routers.hiring.entrypoints=web
+  hiring_conf:
+    build:
+      context: ../../../hiring
+    <<: *job-config
+  pgaudit:
+    build:
+      context: ../../../pgaudit-api
+    labels:
+      - traefik.http.routers.pga.entrypoints=web
+  pgaudit_conf:
+    build:
+      context: ../../../pgaudit-api
+    <<: *job-config
+  pqrs:
+    build:
+      context: ../../../pqrs
+    labels:
+      - traefik.http.routers.pqr.entrypoints=web
+  pqrs_conf:
+    build:
+      context: ../../../pqrs
+    <<: *job-config

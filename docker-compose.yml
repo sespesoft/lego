@@ -14,14 +14,12 @@ include:
   - _services/domain/audit.yml
 services:
   webapp:
+    extends:
+      file: ./_services/domain/environment/${ENV}.yml
+      service: webapp
     container_name: srv-webapp
-    build:
-      context: ./webapp
-      additional_contexts:
-        - assets=./_assets
     restart: always
     labels:
       - traefik.enable=true
       - traefik.http.services.webapp.loadbalancer.server.port=80
       - traefik.http.routers.webapp.rule=Host(`${DOMAIN}`)
-      - traefik.http.routers.webapp.entrypoints=web

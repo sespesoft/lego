@@ -1,8 +1,9 @@
 services:
   pqrs:
+    extends:
+      file: ./environment/${ENV}.yml
+      service: pqrs
     container_name: srv-pqrs
-    build:
-      context: ../../pqrs
     volumes:
       - pub_key:/rsa/pub:ro
       - ./logs:/app/app/storage/logs
@@ -26,15 +27,12 @@ services:
       - traefik.enable=true
       - traefik.http.services.pqr.loadbalancer.server.port=80
       - traefik.http.routers.pqr.rule=Host(`pqrs.${DOMAIN}`)
-      - traefik.http.routers.pqr.entrypoints=web
 
   pqrs_conf:
+    extends:
+      file: ./environment/${ENV}.yml
+      service: pqrs_conf
     container_name: conf-pqrs
-    build:
-      context: ../../pqrs
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
       - DB_HOST=${DB_HOST}
       - DB_DATABASE=${DB_NAME}

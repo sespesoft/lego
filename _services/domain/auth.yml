@@ -1,8 +1,9 @@
 services:
   auth:
+    extends:
+      file: ./environment/${ENV}.yml
+      service: auth
     container_name: srv-auth
-    build:
-      context: ../../auth
     volumes:
       - pub_key:/rsa/pub
       - priv_key:/rsa/priv
@@ -37,15 +38,12 @@ services:
       - traefik.enable=true
       - traefik.http.services.auth.loadbalancer.server.port=80
       - traefik.http.routers.auth.rule=Host(`auth.${DOMAIN}`)
-      - traefik.http.routers.auth.entrypoints=web
 
   auth_conf:
+    extends:
+      file: ./environment/${ENV}.yml
+      service: auth_conf
     container_name: conf-auth
-    build:
-      context: ../../auth
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
       - DB_HOST=${DB_HOST}
       - DB_DATABASE=${DB_NAME}

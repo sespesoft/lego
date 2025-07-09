@@ -1,0 +1,67 @@
+x-common-config: &job-config
+  depends_on:
+    db:
+      condition: service_healthy
+    rabbitmq:
+      condition: service_healthy
+services:
+  webapp:
+    image: ${WEBAPP_REPO}
+    labels:
+      - traefik.http.routers.webapp.entrypoints=websecure
+      - traefik.http.routers.webapp.tls=true
+      - traefik.http.routers.webapp.tls.certresolver=le
+  audit:
+    image: ${AUDIT_REPO}
+    labels:
+      - traefik.http.routers.audit.entrypoints=websecure
+      - traefik.http.routers.audit.tls=true
+      - traefik.http.routers.audit.tls.certresolver=le
+  audit_conf:
+    image: ${AUDIT_REPO}
+    <<: *job-config
+  auth:
+    image: ${AUTH_REPO}
+    labels:
+      - traefik.http.routers.auth.entrypoints=websecure
+      - traefik.http.routers.auth.tls=true
+      - traefik.http.routers.auth.tls.certresolver=le
+  auth_conf:
+    image: ${AUTH_REPO}
+    <<: *job-config
+  geo:
+    image: ${CONF_REPO}
+    labels:
+      - traefik.http.routers.geo.entrypoints=websecure
+      - traefik.http.routers.geo.tls=true
+      - traefik.http.routers.geo.tls.certresolver=le
+  geo_conf:
+    image: ${CONF_REPO}
+    <<: *job-config
+  hiring:
+    image: ${HIRING_REPO}
+    labels:
+      - traefik.http.routers.hiring.entrypoints=websecure
+      - traefik.http.routers.hiring.tls=true
+      - traefik.http.routers.hiring.tls.certresolver=le
+  hiring_conf:
+    image: ${HIRING_REPO}
+    <<: *job-config
+  pgaudit:
+    image: ${PGAUDIT_REPO}
+    labels:
+      - traefik.http.routers.pga.entrypoints=websecure
+      - traefik.http.routers.pga.tls=true
+      - traefik.http.routers.pga.tls.certresolver=le
+  pgaudit_conf:
+    image: ${PGAUDIT_REPO}
+    <<: *job-config
+  pqrs:
+    image: ${PQRS_REPO}
+    labels:
+      - traefik.http.routers.pqr.entrypoints=websecure
+      - traefik.http.routers.pqr.tls=true
+      - traefik.http.routers.pqr.tls.certresolver=le
+  pqrs_conf:
+    image: ${PQRS_REPO}
+    <<: *job-config

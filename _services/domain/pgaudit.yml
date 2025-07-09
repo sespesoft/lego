@@ -1,8 +1,9 @@
 services:
   pgaudit:
+    extends:
+      file: ./environment/${ENV}.yml
+      service: pgaudit
     container_name: srv-pgaudit
-    build:
-      context: ../../pgaudit-api
     volumes:
       - pub_key:/rsa/pub:ro
       - ./logs:/app/app/storage/logs
@@ -23,15 +24,12 @@ services:
       - traefik.enable=true
       - traefik.http.services.pga.loadbalancer.server.port=80
       - traefik.http.routers.pga.rule=Host(`pgaudit.${DOMAIN}`)
-      - traefik.http.routers.pga.entrypoints=web
 
   pgaudit_conf:
+    extends:
+      file: ./environment/${ENV}.yml
+      service: pgaudit_conf
     container_name: conf-pgaudit
-    build:
-      context: ../../pgaudit-api
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
       - DB_HOST=${DB_HOST}
       - DB_DATABASE=${DB_NAME}
