@@ -6,6 +6,7 @@ services:
     container_name: srv-pqrs
     volumes:
       - pub_key:/rsa/pub:ro
+      - pqrs_supervisor:/app/app/storage/supervisor.d
       - ./logs:/app/app/storage/logs
     environment:
       - DB_HOST=${DB_HOST}
@@ -43,6 +44,8 @@ services:
       - MQ_PASSWORD=${MQ_PASSWORD}
       - MQ_HOST=${MQ_HOST}
       - MQ_PORT=${MQ_PORT}
+    volumes:
+      - pqrs_supervisor:/app/app/storage/supervisor.d
     entrypoint: /bin/bash
     user: application
     command:
@@ -52,4 +55,8 @@ services:
         php app/ice dbup --schema=[!t]* --tag=pqrs
         php app/ice configure-rabbitmq
         php app/ice generate-supervisor
+        supervisorctl -s http://pqrs:9001 -u root -p docker reread
+        supervisorctl -s http://pqrs:9001 -u root -p docker update
     restart: on-failure
+volumes:
+  pqrs_supervisor:

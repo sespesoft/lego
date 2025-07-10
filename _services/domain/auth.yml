@@ -7,6 +7,7 @@ services:
     volumes:
       - pub_key:/rsa/pub
       - priv_key:/rsa/priv
+      - auth_supervisor:/app/app/storage/supervisor.d
       - ./logs:/app/app/storage/logs
     environment:
       - APP_URL=${PROTOCOL}://${DOMAIN}
@@ -54,6 +55,8 @@ services:
       - MQ_PASSWORD=${MQ_PASSWORD}
       - MQ_HOST=${MQ_HOST}
       - MQ_PORT=${MQ_PORT}
+    volumes:
+      - auth_supervisor:/app/app/storage/supervisor.d
     user: application
     entrypoint: /bin/bash
     command:
@@ -66,3 +69,4 @@ services:
 volumes:
   pub_key:
   priv_key:
+  auth_supervisor:

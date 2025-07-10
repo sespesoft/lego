@@ -6,6 +6,7 @@ services:
     container_name: srv-hiring
     volumes:
       - pub_key:/rsa/pub:ro
+      - hiring_supervisor:/app/app/storage/supervisor.d
       - ./logs:/app/app/storage/logs
     environment:
       - APP_URL=${PROTOCOL}://${DOMAIN}
@@ -44,12 +45,19 @@ services:
       - MQ_PASSWORD=${MQ_PASSWORD}
       - MQ_HOST=${MQ_HOST}
       - MQ_PORT=${MQ_PORT}
+    volumes:
+      - hiring_supervisor:/app/app/storage/supervisor.d
     user: application
     entrypoint: /bin/bash
     command:
       - -c
       - |
+        set -e
         php app/ice dbup --schema=[!t]* --tag=hiring
         php app/ice configure-rabbitmq
         php app/ice generate-supervisor
+        supervisorctl -s http://hiring:9001 -u root -p docker reread
+        supervisorctl -s http://hiring:9001 -u root -p docker update
     restart: on-failure
+volumes:
+  hiring_supervisor:

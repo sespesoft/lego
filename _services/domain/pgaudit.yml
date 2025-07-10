@@ -6,6 +6,7 @@ services:
     container_name: srv-pgaudit
     volumes:
       - pub_key:/rsa/pub:ro
+      - pgaudit_supervisor:/app/app/storage/supervisor.d
       - ./logs:/app/app/storage/logs
     environment:
       - APP_URL=${PROTOCOL}://${DOMAIN}
@@ -40,6 +41,8 @@ services:
       - MQ_PASSWORD=${MQ_PASSWORD}
       - MQ_HOST=${MQ_HOST}
       - MQ_PORT=${MQ_PORT}
+    volumes:
+      - pgaudit_supervisor:/app/app/storage/supervisor.d
     entrypoint: /bin/bash
     user: application
     command:
@@ -49,4 +52,8 @@ services:
         php app/ice dbup --schema=[!t]* --tag=pgaudit
         php app/ice configure-rabbitmq
         php app/ice generate-supervisor
+        supervisorctl -s http://pgaudit:9001 -u root -p docker reread
+        supervisorctl -s http://pgaudit:9001 -u root -p docker update
     restart: on-failure
+volumes:
+  pgaudit_supervisor:
