@@ -6,6 +6,7 @@ services:
     container_name: srv-audit
     volumes:
       - pub_key:/keys:ro
+      - audit_supervisor:/app/storage/supervisor.d
     environment:
       - APP_NAME=${APP_NAME}
       - APP_ENV=production
@@ -45,7 +46,9 @@ services:
       - MQ_PASSWORD=${MQ_PASSWORD}
       - MQ_HOST=${MQ_HOST}
       - MQ_PORT=${MQ_PORT}
-    restart: always
+    profiles:
+      - all
+      - app
     labels:
       - traefik.enable=true
       - traefik.http.services.audit.loadbalancer.server.port=80
@@ -72,5 +75,11 @@ services:
       - MQ_PASSWORD=${MQ_PASSWORD}
       - MQ_HOST=${MQ_HOST}
       - MQ_PORT=${MQ_PORT}
+    volumes:
+      - audit_supervisor:/app/storage/supervisor.d
+    user: application
+    profiles:
+      - job
     entrypoint: ./database/migrate.sh
-    restart: on-failure
+volumes:
+  audit_supervisor:

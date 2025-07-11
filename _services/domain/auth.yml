@@ -34,7 +34,9 @@ services:
       - MQ_PASSWORD=${MQ_PASSWORD}
       - MQ_HOST=${MQ_HOST}
       - MQ_PORT=${MQ_PORT}
-    restart: always
+    profiles:
+      - all
+      - app
     labels:
       - traefik.enable=true
       - traefik.http.services.auth.loadbalancer.server.port=80
@@ -59,6 +61,8 @@ services:
       - auth_supervisor:/app/app/storage/supervisor.d
     user: application
     entrypoint: /bin/bash
+    profiles:
+      - job
     command:
       - -c
       - |

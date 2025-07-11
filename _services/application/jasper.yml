@@ -17,7 +17,10 @@ services:
       - JASPERREPORTS_DATABASE_PASSWORD=${BI_DB_PASSWORD}
       - JASPERREPORTS_DATABASE_NAME=${BI_DB_NAME}
       - JASPERREPORTS_PASSWORD=${BI_PASSWORD}
-    restart: always
+    profiles:
+      - all
+      - app
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.routers.bi.rule=Host(`bi.${DOMAIN}`)

@@ -11,4 +11,7 @@ services:
       - PGADMIN_CONFIG_WTF_CSRF_CHECK_DEFAULT=False
       - PGADMIN_DEFAULT_EMAIL=admin@sespesoft.com
       - PGADMIN_DEFAULT_PASSWORD=Qazwsx*
-    restart: always
+    profiles:
+      - all
+      - app
+    restart: unless-stopped

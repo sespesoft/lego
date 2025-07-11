@@ -2,7 +2,6 @@ services:
   n8n:
     image: docker.n8n.io/n8nio/n8n
     container_name: app-n8n
-    restart: always
     ports:
       - 127.0.0.1:5678:5678
     environment:
@@ -15,6 +14,10 @@ services:
     volumes:
       - n8n_data:/home/node/.n8n
       - ./n8n:/files
+    profiles:
+      - all
+      - app
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.routers.n8n.rule=Host(`n8n.${DOMAIN}`)

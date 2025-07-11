@@ -18,7 +18,8 @@ services:
       file: ./_services/domain/environment/${ENV}.yml
       service: webapp
     container_name: srv-webapp
-    restart: always
+    profiles:
+      - app
     labels:
       - traefik.enable=true
       - traefik.http.services.webapp.loadbalancer.server.port=80

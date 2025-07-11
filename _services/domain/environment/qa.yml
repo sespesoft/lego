@@ -1,9 +1,33 @@
-x-common-config: &job-config
+x-config-srv: &config-srv
+  restart: unless-stopped
+  deploy:
+    replicas: 2
+    update_config:
+      parallelism: 1
+      order: start-first
+      failure_action: rollback
+      delay: 10s
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 40s
+x-config-job: &config-job
+  restart: on-failure
   depends_on:
     db:
       condition: service_healthy
     rabbitmq:
       condition: service_healthy
+  deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+        max_attempts: 5
+        window: 120s
 services:
   webapp:
     image: ${WEBAPP_IMAGE}
@@ -11,57 +35,64 @@ services:
       - traefik.http.routers.webapp.entrypoints=websecure
       - traefik.http.routers.webapp.tls=true
       - traefik.http.routers.webapp.tls.certresolver=le
+    <<: *config-srv
   audit:
     image: ${AUDIT_IMAGE}
     labels:
       - traefik.http.routers.audit.entrypoints=websecure
       - traefik.http.routers.audit.tls=true
       - traefik.http.routers.audit.tls.certresolver=le
+    <<: *config-srv
   audit_conf:
     image: ${AUDIT_IMAGE}
-    <<: *job-config
+    <<: *config-job
   auth:
     image: ${AUTH_IMAGE}
     labels:
       - traefik.http.routers.auth.entrypoints=websecure
       - traefik.http.routers.auth.tls=true
       - traefik.http.routers.auth.tls.certresolver=le
+    <<: *config-srv
   auth_conf:
     image: ${AUTH_IMAGE}
-    <<: *job-config
+    <<: *config-job
   geo:
     image: ${CONF_IMAGE}
     labels:
       - traefik.http.routers.geo.entrypoints=websecure
       - traefik.http.routers.geo.tls=true
       - traefik.http.routers.geo.tls.certresolver=le
+    <<: *config-srv
   geo_conf:
     image: ${CONF_IMAGE}
-    <<: *job-config
+    <<: *config-job
   hiring:
     image: ${HIRING_IMAGE}
     labels:
       - traefik.http.routers.hiring.entrypoints=websecure
       - traefik.http.routers.hiring.tls=true
       - traefik.http.routers.hiring.tls.certresolver=le
+    <<: *config-srv
   hiring_conf:
     image: ${HIRING_IMAGE}
-    <<: *job-config
+    <<: *config-job
   pgaudit:
     image: ${PGAUDIT_IMAGE}
     labels:
       - traefik.http.routers.pga.entrypoints=websecure
       - traefik.http.routers.pga.tls=true
       - traefik.http.routers.pga.tls.certresolver=le
+    <<: *config-srv
   pgaudit_conf:
     image: ${PGAUDIT_IMAGE}
-    <<: *job-config
+    <<: *config-job
   pqrs:
     image: ${PQRS_IMAGE}
     labels:
       - traefik.http.routers.pqr.entrypoints=websecure
       - traefik.http.routers.pqr.tls=true
       - traefik.http.routers.pqr.tls.certresolver=le
+    <<: *config-srv
   pqrs_conf:
     image: ${PQRS_IMAGE}
-    <<: *job-config
+    <<: *config-job
