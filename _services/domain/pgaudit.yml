@@ -3,7 +3,6 @@ services:
     extends:
       file: ./environment/${ENV}.yml
       service: pgaudit
-    container_name: srv-pgaudit
     volumes:
       - pub_key:/rsa/pub:ro
       - pgaudit_supervisor:/app/app/storage/supervisor.d
@@ -29,11 +28,10 @@ services:
       - traefik.http.services.pga.loadbalancer.server.port=80
       - traefik.http.routers.pga.rule=Host(`pgaudit.${DOMAIN}`)
 
-  pgaudit_conf:
+  job_pgaudit:
     extends:
       file: ./environment/${ENV}.yml
-      service: pgaudit_conf
-    container_name: conf-pgaudit
+      service: job_pgaudit
     environment:
       - DB_HOST=${DB_HOST}
       - DB_DATABASE=${DB_NAME}
@@ -48,6 +46,7 @@ services:
       - pgaudit_supervisor:/app/app/storage/supervisor.d
     user: application
     profiles:
+      - all
       - job
     entrypoint: /bin/bash
     command:
@@ -60,5 +59,7 @@ services:
         supervisorctl -s http://pgaudit:9001 -u root -p docker reread
         supervisorctl -s http://pgaudit:9001 -u root -p docker update
     restart: on-failure
+    labels:
+      - service.rol=job
 volumes:
   pgaudit_supervisor:

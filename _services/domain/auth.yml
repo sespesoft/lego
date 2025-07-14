@@ -3,7 +3,6 @@ services:
     extends:
       file: ./environment/${ENV}.yml
       service: auth
-    container_name: srv-auth
     volumes:
       - pub_key:/rsa/pub
       - priv_key:/rsa/priv
@@ -42,11 +41,10 @@ services:
       - traefik.http.services.auth.loadbalancer.server.port=80
       - traefik.http.routers.auth.rule=Host(`auth.${DOMAIN}`)
 
-  auth_conf:
+  job_auth:
     extends:
       file: ./environment/${ENV}.yml
-      service: auth_conf
-    container_name: conf-auth
+      service: job_auth
     environment:
       - DB_HOST=${DB_HOST}
       - DB_DATABASE=${DB_NAME}
@@ -62,6 +60,7 @@ services:
     user: application
     entrypoint: /bin/bash
     profiles:
+      - all
       - job
     command:
       - -c
@@ -70,6 +69,8 @@ services:
         php app/ice dbup --schema="{perfiles,[!t]*}" --tag=auth
         php app/ice configure-rabbitmq
     restart: on-failure
+    labels:
+      - service.rol=job
 volumes:
   pub_key:
   priv_key:

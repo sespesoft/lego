@@ -3,7 +3,6 @@ services:
     extends:
       file: ./environment/${ENV}.yml
       service: geo
-    container_name: srv-geo
     volumes:
       - pub_key:/rsa/pub:ro
       - geo_supervisor:/app/app/storage/supervisor.d
@@ -27,11 +26,10 @@ services:
       - traefik.http.services.geo.loadbalancer.server.port=80
       - traefik.http.routers.geo.rule=Host(`geo.${DOMAIN}`)
 
-  geo_conf:
+  job_geo:
     extends:
       file: ./environment/${ENV}.yml
-      service: geo_conf
-    container_name: conf-geo
+      service: job_geo
     environment:
       - DB_HOST=${DB_HOST}
       - DB_DATABASE=${DB_NAME}
@@ -45,6 +43,7 @@ services:
     volumes:
       - geo_supervisor:/app/app/storage/supervisor.d
     profiles:
+      - all
       - job
     entrypoint: /bin/bash
     user: application
@@ -58,5 +57,7 @@ services:
         supervisorctl -s http://geo:9001 -u root -p docker reread
         supervisorctl -s http://geo:9001 -u root -p docker update
     restart: on-failure
+    labels:
+      - service.rol=job
 volumes:
   geo_supervisor:

@@ -10,15 +10,15 @@ include:
   - _services/domain/pqrs.yml
   - _services/domain/hiring.yml
   - _services/domain/pgaudit.yml
-  - _services//domain/geo.yml
+  - _services/domain/geo.yml
   - _services/domain/audit.yml
 services:
   webapp:
     extends:
       file: ./_services/domain/environment/${ENV}.yml
       service: webapp
-    container_name: srv-webapp
     profiles:
+      - all
       - app
     labels:
       - traefik.enable=true

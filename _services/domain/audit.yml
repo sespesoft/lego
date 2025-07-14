@@ -3,7 +3,6 @@ services:
     extends:
       file: ./environment/${ENV}.yml
       service: audit
-    container_name: srv-audit
     volumes:
       - pub_key:/keys:ro
       - audit_supervisor:/app/storage/supervisor.d
@@ -54,11 +53,10 @@ services:
       - traefik.http.services.audit.loadbalancer.server.port=80
       - traefik.http.routers.audit.rule=Host(`audit.${DOMAIN}`)
 
-  audit_conf:
+  job_audit:
     extends:
       file: ./environment/${ENV}.yml
-      service: audit_conf
-    container_name: conf-audit
+      service: job_audit
     environment:
       - APP_NAME=${APP_NAME}
       - APP_ENV=local
@@ -79,7 +77,10 @@ services:
       - audit_supervisor:/app/storage/supervisor.d
     user: application
     profiles:
+      - all
       - job
     entrypoint: ./database/migrate.sh
+    labels:
+      - service.rol=job
 volumes:
   audit_supervisor:

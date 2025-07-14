@@ -22,7 +22,7 @@ services:
     labels:
       - traefik.http.routers.audit.entrypoints=web
     <<: *config-srv
-  audit_conf:
+  job_audit:
     build:
       context: ../../../audit
     <<: *config-job
@@ -32,7 +32,7 @@ services:
     labels:
       - traefik.http.routers.auth.entrypoints=web
     <<: *config-srv
-  auth_conf:
+  job_auth:
     build:
       context: ../../../auth
     <<: *config-job
@@ -42,7 +42,7 @@ services:
     labels:
       - traefik.http.routers.geo.entrypoints=web
     <<: *config-srv
-  geo_conf:
+  job_geo:
     build:
       context: ../../../geo
     <<: *config-job
@@ -52,7 +52,7 @@ services:
     labels:
       - traefik.http.routers.hiring.entrypoints=web
     <<: *config-srv
-  hiring_conf:
+  job_hiring:
     build:
       context: ../../../hiring
     <<: *config-job
@@ -62,7 +62,7 @@ services:
     labels:
       - traefik.http.routers.pga.entrypoints=web
     <<: *config-srv
-  pgaudit_conf:
+  job_pgaudit:
     build:
       context: ../../../pgaudit-api
     <<: *config-job
@@ -72,7 +72,7 @@ services:
     labels:
       - traefik.http.routers.pqr.entrypoints=web
     <<: *config-srv
-  pqrs_conf:
+  job_pqrs:
     build:
       context: ../../../pqrs
     <<: *config-job

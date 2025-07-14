@@ -28,6 +28,8 @@ x-config-job: &config-job
         delay: 15s
         max_attempts: 5
         window: 120s
+      placement:
+        constraints: [node.role == manager]
 services:
   webapp:
     image: ${WEBAPP_IMAGE}
@@ -43,7 +45,7 @@ services:
       - traefik.http.routers.audit.tls=true
       - traefik.http.routers.audit.tls.certresolver=le
     <<: *config-srv
-  audit_conf:
+  job_audit:
     image: ${AUDIT_IMAGE}
     <<: *config-job
   auth:
@@ -53,7 +55,7 @@ services:
       - traefik.http.routers.auth.tls=true
       - traefik.http.routers.auth.tls.certresolver=le
     <<: *config-srv
-  auth_conf:
+  job_auth:
     image: ${AUTH_IMAGE}
     <<: *config-job
   geo:
@@ -63,7 +65,7 @@ services:
       - traefik.http.routers.geo.tls=true
       - traefik.http.routers.geo.tls.certresolver=le
     <<: *config-srv
-  geo_conf:
+  job_geo:
     image: ${CONF_IMAGE}
     <<: *config-job
   hiring:
@@ -73,7 +75,7 @@ services:
       - traefik.http.routers.hiring.tls=true
       - traefik.http.routers.hiring.tls.certresolver=le
     <<: *config-srv
-  hiring_conf:
+  job_hiring:
     image: ${HIRING_IMAGE}
     <<: *config-job
   pgaudit:
@@ -83,7 +85,7 @@ services:
       - traefik.http.routers.pga.tls=true
       - traefik.http.routers.pga.tls.certresolver=le
     <<: *config-srv
-  pgaudit_conf:
+  job_pgaudit:
     image: ${PGAUDIT_IMAGE}
     <<: *config-job
   pqrs:
@@ -93,6 +95,6 @@ services:
       - traefik.http.routers.pqr.tls=true
       - traefik.http.routers.pqr.tls.certresolver=le
     <<: *config-srv
-  pqrs_conf:
+  job_pqrs:
     image: ${PQRS_IMAGE}
     <<: *config-job

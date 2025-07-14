@@ -3,7 +3,6 @@ services:
     extends:
       file: ./environment/${ENV}.yml
       service: hiring
-    container_name: srv-hiring
     volumes:
       - pub_key:/rsa/pub:ro
       - hiring_supervisor:/app/app/storage/supervisor.d
@@ -33,11 +32,10 @@ services:
       - traefik.http.services.hiring.loadbalancer.server.port=80
       - traefik.http.routers.hiring.rule=Host(`hiring.${DOMAIN}`)
 
-  hiring_conf:
+  job_hiring:
     extends:
       file: ./environment/${ENV}.yml
-      service: hiring_conf
-    container_name: conf-hiring
+      service: job_hiring
     environment:
       - DB_HOST=${DB_HOST}
       - DB_DATABASE=${DB_NAME}
@@ -52,6 +50,7 @@ services:
       - hiring_supervisor:/app/app/storage/supervisor.d
     user: application
     profiles:
+      - all
       - job
     entrypoint: /bin/bash
     command:
@@ -64,5 +63,7 @@ services:
         supervisorctl -s http://hiring:9001 -u root -p docker reread
         supervisorctl -s http://hiring:9001 -u root -p docker update
     restart: on-failure
+    labels:
+      - service.rol=job
 volumes:
   hiring_supervisor:
