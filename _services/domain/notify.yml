@@ -1,0 +1,15 @@
+services:
+  soketi:
+    image: 'quay.io/soketi/soketi:latest-16-alpine'
+    environment:
+      SOKETI_DEBUG: 1
+      SOKETI_DEFAULT_APP_ID: app-id
+      SOKETI_DEFAULT_APP_KEY: app-key
+      SOKETI_DEFAULT_APP_SECRET: app-secret
+    labels:
+        - traefik.enable=true
+        - traefik.http.routers.notify.rule=Host(`notify.${DOMAIN}`)
+        - traefik.http.services.notify.loadbalancer.server.port=6001
+        - traefik.http.routers.notify.entrypoints=web
+        - "traefik.http.services.notify.loadbalancer.sticky=true"
+        - traefik.http.services.notify.loadbalancer.sticky.cookie.name=soketi_sticky

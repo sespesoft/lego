@@ -27,12 +27,12 @@ The project uses a `.env` file for environment-specific variables. To create you
 For Linux or macOS:
 
 ```bash
-cp example.dev .env
+cp example.env .env
 ```
 
 For Windows, you can copy the file manually. After copying, you may need to adjust the variables inside the .env file to match your local setup.
 
-### execute
+### Execute
 
 To run all services, use the all profile:
 
@@ -49,7 +49,9 @@ docker compose --profile <your-profile-name> up -d
 ```
 ---
 
-## Frontend assets
+## Production
+
+### Frontend assets
 
 To modify the frontend assets used when deploying the project, you must include the build context within the pipeline configuration.
 
@@ -59,4 +61,21 @@ Use the `with` block to specify the `build-contexts` argument, pointing `assets`
 with:
     push: true
     build-contexts: assets=https://github.com/sespesoft/lego.git#:_assets/caresoft
+```
+
+
+### Create keys
+
+```bash
+openssl genrsa -out priv_key.pem 2048
+openssl rsa -in priv_key.pem -pubout -out pub_key.pem
+```
+
+_:warning: Never use sample keys in the `_configs` folder in production._
+
+## Upload secrets and configs
+
+```bash
+docker secret create priv_key ./priv_key.pem
+docker config create pub_key ./pub_key.pem
 ```

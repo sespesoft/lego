@@ -1,0 +1,10 @@
+secrets:
+  priv_key:
+    external: true
+configs:
+  pub_key:
+    external: true
+  loki_config:
+    external: true
+  promtail_config:
+    external: true

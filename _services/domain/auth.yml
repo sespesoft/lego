@@ -3,11 +3,6 @@ services:
     extends:
       file: ./environment/${ENV}.yml
       service: auth
-    volumes:
-      - pub_key:/rsa/pub
-      - priv_key:/rsa/priv
-      - auth_supervisor:/app/app/storage/supervisor.d
-      - ./logs:/app/app/storage/logs
     environment:
       - APP_URL=${PROTOCOL}://${DOMAIN}
       - APP_NAME=${APP_NAME}
@@ -36,6 +31,13 @@ services:
     profiles:
       - all
       - app
+    secrets:
+      - source: priv_key
+        target: /rsa/priv/key.pem
+        mode: 0444
+    configs:
+      - source: pub_key
+        target: /rsa/pub/key.pem
     labels:
       - traefik.enable=true
       - traefik.http.services.auth.loadbalancer.server.port=80
@@ -55,8 +57,6 @@ services:
       - MQ_PASSWORD=${MQ_PASSWORD}
       - MQ_HOST=${MQ_HOST}
       - MQ_PORT=${MQ_PORT}
-    volumes:
-      - auth_supervisor:/app/app/storage/supervisor.d
     user: application
     entrypoint: /bin/bash
     profiles:
@@ -71,7 +71,3 @@ services:
     restart: on-failure
     labels:
       - service.rol=job
-volumes:
-  pub_key:
-  priv_key:
-  auth_supervisor:

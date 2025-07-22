@@ -3,10 +3,6 @@ services:
     extends:
       file: ./environment/${ENV}.yml
       service: pgaudit
-    volumes:
-      - pub_key:/rsa/pub:ro
-      - pgaudit_supervisor:/app/app/storage/supervisor.d
-      - ./logs:/app/app/storage/logs
     environment:
       - APP_URL=${PROTOCOL}://${DOMAIN}
       - APP_NAME=${APP_NAME}
@@ -23,6 +19,9 @@ services:
     profiles:
       - all
       - app
+    configs:
+      - source: pub_key
+        target: /rsa/pub/key.pem
     labels:
       - traefik.enable=true
       - traefik.http.services.pga.loadbalancer.server.port=80
@@ -42,8 +41,6 @@ services:
       - MQ_PASSWORD=${MQ_PASSWORD}
       - MQ_HOST=${MQ_HOST}
       - MQ_PORT=${MQ_PORT}
-    volumes:
-      - pgaudit_supervisor:/app/app/storage/supervisor.d
     user: application
     profiles:
       - all
@@ -55,11 +52,6 @@ services:
         set -e
         php app/ice dbup --schema=[!t]* --tag=pgaudit
         php app/ice configure-rabbitmq
-        php app/ice generate-supervisor
-        supervisorctl -s http://pgaudit:9001 -u root -p docker reread
-        supervisorctl -s http://pgaudit:9001 -u root -p docker update
     restart: on-failure
     labels:
       - service.rol=job
-volumes:
-  pgaudit_supervisor:

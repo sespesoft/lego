@@ -1,0 +1,22 @@
+services:
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: infra-loki
+    volumes:
+      - loki_data:/loki
+      - ../../_configs/loki.yml:/etc/loki/local-config.yaml:ro
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        chown -R 10001:10001 /loki
+        /usr/bin/loki -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
+volumes:
+  loki_data:

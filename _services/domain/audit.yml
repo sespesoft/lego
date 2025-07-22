@@ -3,9 +3,6 @@ services:
     extends:
       file: ./environment/${ENV}.yml
       service: audit
-    volumes:
-      - pub_key:/keys:ro
-      - audit_supervisor:/app/storage/supervisor.d
     environment:
       - APP_NAME=${APP_NAME}
       - APP_ENV=production
@@ -48,6 +45,9 @@ services:
     profiles:
       - all
       - app
+    configs:
+      - source: pub_key
+        target: /keys/key.pem
     labels:
       - traefik.enable=true
       - traefik.http.services.audit.loadbalancer.server.port=80
@@ -73,8 +73,6 @@ services:
       - MQ_PASSWORD=${MQ_PASSWORD}
       - MQ_HOST=${MQ_HOST}
       - MQ_PORT=${MQ_PORT}
-    volumes:
-      - audit_supervisor:/app/storage/supervisor.d
     user: application
     profiles:
       - all
@@ -82,5 +80,3 @@ services:
     entrypoint: ./database/migrate.sh
     labels:
       - service.rol=job
-volumes:
-  audit_supervisor:
