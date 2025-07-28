@@ -1,7 +1,11 @@
 services:
   loki:
-    image: grafana/loki:2.9.0
+    image: grafana/loki:3.5.3
     container_name: infra-loki
+    environment:
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_KEY}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET}
     volumes:
       - loki_data:/loki
       - ../../_configs/loki.yml:/etc/loki/local-config.yaml:ro
@@ -10,8 +14,11 @@ services:
       - -c
       - |
         chown -R 10001:10001 /loki
-        /usr/bin/loki -config.file=/etc/loki/local-config.yaml
+        /usr/bin/loki -config.file=/etc/loki/local-config.yaml -config.expand-env=true
     restart: unless-stopped
+    depends_on:
+      minio:
+        condition: service_healthy
     deploy:
       mode: replicated
       replicas: 1

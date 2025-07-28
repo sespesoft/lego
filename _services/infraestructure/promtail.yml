@@ -1,11 +1,16 @@
 services:
   promtail:
-    image: grafana/promtail:2.9.0
+    image: grafana/promtail:3.5.3
     container_name: infra-promtail
+    environment:
+      - SCOPE_ORG_ID=${ENV}
     volumes:
+      - ${PROMTAIL_POSITION_PATH}:/promtail
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ../../_configs/promtail.yml:/etc/promtail/config.yml:ro
-    command: -config.file=/etc/promtail/config.yml
+    command:
+      - -config.file=/etc/promtail/config.yml
+      - -config.expand-env=true
     restart: unless-stopped
     deploy:
       mode: global

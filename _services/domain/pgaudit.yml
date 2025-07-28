@@ -26,6 +26,7 @@ services:
       - traefik.enable=true
       - traefik.http.services.pga.loadbalancer.server.port=80
       - traefik.http.routers.pga.rule=Host(`pgaudit.${DOMAIN}`)
+      - service.role=app
 
   job_pgaudit:
     extends:
@@ -54,4 +55,4 @@ services:
         php app/ice configure-rabbitmq
     restart: on-failure
     labels:
-      - service.rol=job
+      - service.role=job

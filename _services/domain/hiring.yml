@@ -30,6 +30,7 @@ services:
       - traefik.enable=true
       - traefik.http.services.hiring.loadbalancer.server.port=80
       - traefik.http.routers.hiring.rule=Host(`hiring.${DOMAIN}`)
+      - service.role=app
 
   job_hiring:
     extends:
@@ -58,4 +59,4 @@ services:
         php app/ice configure-rabbitmq
     restart: on-failure
     labels:
-      - service.rol=job
+      - service.role=job

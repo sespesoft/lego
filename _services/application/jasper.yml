@@ -1,5 +1,3 @@
-include:
-  - ../infraestructure/jasper-db.yml
 services:
   jasper:
     container_name: app-jasper
@@ -7,11 +5,11 @@ services:
     volumes:
       - jasper_data:/bitnami/jasperreports
     depends_on:
-      jasper_db:
+      db:
         condition: service_healthy
     environment:
       - JASPERREPORTS_DATABASE_TYPE=postgresql
-      - JASPERREPORTS_DATABASE_HOST=jasper_db
+      - JASPERREPORTS_DATABASE_HOST=${BI_DB_HOST}
       - JASPERREPORTS_DATABASE_PORT_NUMBER=5432
       - JASPERREPORTS_DATABASE_USER=${BI_DB_USER}
       - JASPERREPORTS_DATABASE_PASSWORD=${BI_DB_PASSWORD}

@@ -29,6 +29,7 @@ services:
       - traefik.enable=true
       - traefik.http.services.pqr.loadbalancer.server.port=80
       - traefik.http.routers.pqr.rule=Host(`pqrs.${DOMAIN}`)
+      - service.role=app
 
   job_pqrs:
     extends:
@@ -57,4 +58,4 @@ services:
         php app/ice configure-rabbitmq
     restart: on-failure
     labels:
-      - service.rol=job
+      - service.role=job

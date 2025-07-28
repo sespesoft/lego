@@ -8,6 +8,7 @@ geo
 _services/application/storage
 _services/application/n8n
 _services/infraestructure/letsencrypt
+_services/infraestructure/promtail
 priv_key.pem
 pub_key.pem
 .env

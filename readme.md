@@ -73,7 +73,7 @@ openssl rsa -in priv_key.pem -pubout -out pub_key.pem
 
 _:warning: Never use sample keys in the `_configs` folder in production._
 
-## Upload secrets and configs
+### Upload secrets and configs
 
 ```bash
 docker secret create priv_key ./priv_key.pem

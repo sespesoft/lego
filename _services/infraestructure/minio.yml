@@ -30,6 +30,7 @@ services:
       sleep 5;
       /usr/bin/mc alias set dockerminio http://minio:9000 ${AWS_KEY} ${AWS_SECRET};
       /usr/bin/mc mb dockerminio/${AWS_BUCKET};
+      /usr/bin/mc mb dockerminio/loki;
       exit 0;
       "
     restart: on-failure

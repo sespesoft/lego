@@ -1,4 +1,4 @@
-auth_enabled: false
+auth_enabled: true
 server:
   http_listen_port: 3100
 ingester:
@@ -6,7 +6,7 @@ ingester:
     address: 127.0.0.1
     ring:
       kvstore:
-        store: inmemory
+        store: memberlist
       replication_factor: 1
     final_sleep: 0s
   chunk_idle_period: 5m
@@ -15,25 +15,37 @@ ingester:
   wal:
     enabled: true
     dir: /loki/wal
+memberlist:
+  join_members:
+    - loki
 schema_config:
   configs:
-    - from: 2020-10-24
-      store: boltdb-shipper
-      object_store: filesystem
-      schema: v11
+    - from: 2025-07-25
+      store: tsdb
+      object_store: s3
+      schema: v13
       index:
         prefix: index_
         period: 24h
 storage_config:
-  boltdb_shipper:
-    active_index_directory: /loki/boltdb-shipper-active
-    cache_location: /loki/boltdb-shipper-cache
+  tsdb_shipper:
+    active_index_directory: /loki/tsdb-shipper-active
+    cache_location: /loki/tsdb-shipper-cache
     cache_ttl: 24h
-    shared_store: filesystem
-  filesystem:
-    directory: /loki/chunks
+  aws:
+    endpoint: http://minio:9000
+    region: ${AWS_REGION}
+    bucketnames: loki
+    access_key_id: ${AWS_ACCESS_KEY_ID}
+    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+    s3forcepathstyle: true
 compactor:
   working_directory: /loki/compactor
-  shared_store: filesystem
   compaction_interval: 10m
-  retention_enabled: false
+  retention_enabled: true
+  delete_request_store: s3
+limits_config:
+  volume_enabled: true
+  retention_period: 336h
+  ingestion_rate_mb: 4
+  ingestion_burst_size_mb: 8

@@ -3,7 +3,15 @@ include:
   - ../infraestructure/promtail.yml
 services:
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:12.1.0
+    environment:
+      GF_DATABASE_TYPE: postgres
+      GF_DATABASE_HOST: ${GF_DB_HOST}
+      GF_DATABASE_NAME: ${GF_DB_NAME}
+      GF_DATABASE_USER: ${GF_DB_USER}
+      GF_DATABASE_PASSWORD: ${GF_DB_PASSWORD}
+      GF_DATABASE_SSL_MODE: 'disable'
+      SCOPE_ORG_ID: ${ENV}
     container_name: app-grafana
     volumes:
       - grafana_data:/var/lib/grafana

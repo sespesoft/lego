@@ -52,6 +52,7 @@ services:
       - traefik.enable=true
       - traefik.http.services.audit.loadbalancer.server.port=80
       - traefik.http.routers.audit.rule=Host(`audit.${DOMAIN}`)
+      - service.role=app
 
   job_audit:
     extends:
@@ -79,4 +80,4 @@ services:
       - job
     entrypoint: ./database/migrate.sh
     labels:
-      - service.rol=job
+      - service.role=job
