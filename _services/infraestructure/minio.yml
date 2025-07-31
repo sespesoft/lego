@@ -17,6 +17,15 @@ services:
       timeout: 10s
       retries: 5
       start_period: 10s
+    profiles:
+      - all
+      - infra
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
   job_minio:
     image: minio/mc
     container_name: job-minio
@@ -33,6 +42,17 @@ services:
       /usr/bin/mc mb dockerminio/loki;
       exit 0;
       "
+    profiles:
+      - all
+      - job
     restart: on-failure
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+        max_attempts: 5
+        window: 120s
 volumes:
   minio_data:

@@ -15,7 +15,16 @@ services:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q check_local_alarms"]
       interval: 30s
       timeout: 10s
-      retries: 5
+      retries: 6
       start_period: 80s
+    profiles:
+      - all
+      - infra
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
 volumes:
   rabbitmq_data:

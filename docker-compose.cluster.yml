@@ -4,7 +4,3 @@ secrets:
 configs:
   pub_key:
     external: true
-  loki_config:
-    external: true
-  promtail_config:
-    external: true

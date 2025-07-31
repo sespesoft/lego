@@ -23,8 +23,6 @@ x-config-job: &config-job
         delay: 15s
         max_attempts: 5
         window: 120s
-      placement:
-        constraints: [node.role == manager]
 services:
   webapp:
     image: ${WEBAPP_IMAGE}
@@ -92,3 +90,19 @@ services:
   job_pqrs:
     image: ${PQRS_IMAGE}
     <<: *config-job
+  notify:
+    image: ${NOTIFY_IMAGE}
+    environment:
+      APP_ENV: production
+      APP_DEBUG: false
+    labels:
+      - traefik.http.routers.notify.entrypoints=websecure
+      - traefik.http.routers.notify.tls=true
+      - traefik.http.routers.notify.tls.certresolver=le
+    <<: *config-srv
+  soketi:
+    labels:
+      - traefik.http.routers.soketi.entrypoints=websecure
+      - traefik.http.routers.soketi.tls=true
+      - traefik.http.routers.soketi.tls.certresolver=le
+    <<: *config-srv

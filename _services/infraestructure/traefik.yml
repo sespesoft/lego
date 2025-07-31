@@ -16,3 +16,9 @@ services:
       - all
       - app
     restart: unless-stopped
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager

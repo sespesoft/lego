@@ -21,6 +21,9 @@ services:
       context: ../../../audit
     labels:
       - traefik.http.routers.audit.entrypoints=web
+    depends_on:
+      job_audit:
+        condition: service_completed_successfully
     <<: *config-srv
   job_audit:
     build:
@@ -31,6 +34,9 @@ services:
       context: ../../../auth
     labels:
       - traefik.http.routers.auth.entrypoints=web
+    depends_on:
+      job_auth:
+        condition: service_completed_successfully
     <<: *config-srv
   job_auth:
     build:
@@ -41,6 +47,9 @@ services:
       context: ../../../geo
     labels:
       - traefik.http.routers.geo.entrypoints=web
+    depends_on:
+      job_geo:
+        condition: service_completed_successfully
     <<: *config-srv
   job_geo:
     build:
@@ -51,6 +60,9 @@ services:
       context: ../../../hiring
     labels:
       - traefik.http.routers.hiring.entrypoints=web
+    depends_on:
+      job_hiring:
+        condition: service_completed_successfully
     <<: *config-srv
   job_hiring:
     build:
@@ -61,6 +73,9 @@ services:
       context: ../../../pgaudit-api
     labels:
       - traefik.http.routers.pga.entrypoints=web
+    depends_on:
+      job_pgaudit:
+        condition: service_completed_successfully
     <<: *config-srv
   job_pgaudit:
     build:
@@ -71,8 +86,29 @@ services:
       context: ../../../pqrs
     labels:
       - traefik.http.routers.pqr.entrypoints=web
+    depends_on:
+      job_pqrs:
+        condition: service_completed_successfully
     <<: *config-srv
   job_pqrs:
     build:
       context: ../../../pqrs
     <<: *config-job
+  notify:
+    build:
+      context: ../../../notify-soketi
+    labels:
+      - traefik.http.routers.notify.entrypoints=web
+    depends_on:
+      soketi:
+        condition: service_started
+    <<: *config-srv
+  soketi:
+    environment:
+      SOKETI_DEBUG: true
+    labels:
+      - traefik.http.routers.soketi.entrypoints=web
+    depends_on:
+      redis:
+        condition: service_healthy
+    <<: *config-srv

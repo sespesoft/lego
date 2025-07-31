@@ -1,0 +1,27 @@
+x-config-app: &config-app
+  restart: unless-stopped
+  deploy:
+    mode: replicated
+    replicas: 1
+    placement:
+      constraints: 
+        - node.role == manager
+services:
+  grafana:
+    labels:
+      - traefik.http.routers.grafana.entrypoints=websecure
+      - traefik.http.routers.grafana.tls=true
+      - traefik.http.routers.grafana.tls.certresolver=le
+    <<: *config-app
+  jasper:
+    labels:
+      - traefik.http.routers.bi.entrypoints=websecure
+      - traefik.http.routers.bi.tls=true
+      - traefik.http.routers.bi.tls.certresolver=le
+    <<: *config-app
+  n8n:
+    labels:
+      - traefik.http.routers.n8n.entrypoints=websecure
+      - traefik.http.routers.n8n.tls=true
+      - traefik.http.routers.n8n.tls.certresolver=le
+    <<: *config-app

@@ -3,6 +3,9 @@ include:
   - ../infraestructure/promtail.yml
 services:
   grafana:
+    extends:
+      file: ./environment/${ENV}.yml
+      service: grafana
     image: grafana/grafana:12.1.0
     environment:
       GF_DATABASE_TYPE: postgres
@@ -16,17 +19,18 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ../../_configs/grafana-provision.yml:/etc/grafana/provisioning/datasources/datasource.yaml:ro
+    profiles:
+      - all
+      - app
     deploy:
       mode: replicated
       replicas: 1
       placement:
         constraints:
           - node.role == manager
-    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN}`)
       - traefik.http.services.grafana.loadbalancer.server.port=3000
-      - traefik.http.routers.grafana.entrypoints=web
 volumes:
   grafana_data:

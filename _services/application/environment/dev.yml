@@ -1,0 +1,18 @@
+x-config-app: &config-app
+  restart: unless-stopped
+  depends_on:
+    db:
+      condition: service_healthy
+services:
+  grafana:
+    labels:
+      - traefik.http.routers.grafana.entrypoints=web
+    <<: *config-app
+  jasper:
+    labels:
+      - traefik.http.routers.bi.entrypoints=web
+    <<: *config-app
+  n8n:
+    labels:
+      - traefik.http.routers.n8n.entrypoints=web
+    <<: *config-app

@@ -12,5 +12,8 @@ services:
       - -config.file=/etc/promtail/config.yml
       - -config.expand-env=true
     restart: unless-stopped
+    profiles:
+      - all
+      - infra
     deploy:
       mode: global

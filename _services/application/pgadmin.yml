@@ -3,7 +3,7 @@ services:
     container_name: app-pgadmin
     image: dpage/pgadmin4
     ports:
-      - 8084:80
+      - 127.0.0.1:8084:80
     user: ${UID}:${GID}
     volumes:
       - ./storage:/var/lib/pgadmin/storage

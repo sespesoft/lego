@@ -1,12 +1,12 @@
 services:
   jasper:
+    extends:
+      file: ./environment/${ENV}.yml
+      service: jasper
     container_name: app-jasper
     image: bitnami/jasperreports-archived:8.2.0-debian-11-r98
     volumes:
       - jasper_data:/bitnami/jasperreports
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
       - JASPERREPORTS_DATABASE_TYPE=postgresql
       - JASPERREPORTS_DATABASE_HOST=${BI_DB_HOST}
@@ -18,11 +18,9 @@ services:
     profiles:
       - all
       - app
-    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.routers.bi.rule=Host(`bi.${DOMAIN}`)
       - traefik.http.services.bi.loadbalancer.server.port=8080
-      - traefik.http.routers.bi.entrypoints=web
 volumes:
   jasper_data:

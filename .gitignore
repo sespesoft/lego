@@ -5,6 +5,7 @@ hiring
 pgaudit-api
 webapp
 geo
+notify-soketi
 _services/application/storage
 _services/application/n8n
 _services/infraestructure/letsencrypt

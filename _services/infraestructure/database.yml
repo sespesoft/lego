@@ -23,5 +23,14 @@ services:
       timeout: 60s
       retries: 5
       start_period: 80s
+    profiles:
+      - all
+      - infra
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
 volumes:
   pg_data:

@@ -12,13 +12,19 @@ services:
       - ${REDIS_PASSWORD}
       - --port
       - ${REDIS_PORT}
-    environment:
-      - REDIS_PASSWWORD=${REDIS_PASSWORD}
-      - REDIS_PORT=${REDIS_PORT}
     healthcheck:
       test: [CMD, redis-cli, ping]
       interval: 10s
       timeout: 5s
       retries: 3
+    profiles:
+      - all
+      - infra
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: 
+          - node.role == manager
 volumes:
   redis-data:
