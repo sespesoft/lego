@@ -3,9 +3,9 @@ services:
     image: grafana/loki:3.5.3
     container_name: infra-loki
     environment:
-      - AWS_REGION=${AWS_REGION}
-      - AWS_ACCESS_KEY_ID=${AWS_KEY}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
     volumes:
       - loki_data:/loki
       - ../../_configs/loki.yml:/etc/loki/local-config.yaml:ro

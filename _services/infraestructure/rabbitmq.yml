@@ -5,9 +5,9 @@ services:
     ports:
       - 127.0.0.1:8072:15672
     environment:
-      - RABBITMQ_DEFAULT_USER=${MQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${MQ_PASSWORD}
-      - RABBITMQ_NODENAME=rabbit@rabbitmq
+      RABBITMQ_DEFAULT_USER: ${MQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${MQ_PASSWORD}
+      RABBITMQ_NODENAME: rabbit@rabbitmq
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     restart: unless-stopped
