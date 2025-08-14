@@ -1,0 +1,10 @@
+{
+    "title": "Test » sespesoft",
+    "audit": "https://audit.test.sespesoft.com/api/auth/",
+    "auth": "https://auth.test.sespesoft.com/",
+    "pqr": "https://pqrs.test.sespesoft.com/",
+    "hiring": "https://hiring.test.sespesoft.com/",
+    "pgaudit": "https://pgaudit.test.sespesoft.com/",
+    "geo": "https://geo.test.sespesoft.com/",
+    "siteKey": "6LeytpwrAAAAALGZvFiU_XuJsTX6Alrae2UqfdEX"
+}
