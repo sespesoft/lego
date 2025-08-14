@@ -13,6 +13,12 @@ services:
       - traefik.http.routers.grafana.tls=true
       - traefik.http.routers.grafana.tls.certresolver=le
     <<: *config-app
+  superset:
+    labels:
+      - traefik.http.routers.superset.entrypoints=websecure
+      - traefik.http.routers.superset.tls=true
+      - traefik.http.routers.superset.tls.certresolver=le
+    <<: *config-app
   jasper:
     labels:
       - traefik.http.routers.bi.entrypoints=websecure

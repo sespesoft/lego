@@ -8,6 +8,10 @@ services:
     labels:
       - traefik.http.routers.grafana.entrypoints=web
     <<: *config-app
+  superset:
+    labels:
+      - traefik.http.routers.superset.entrypoints=web
+    <<: *config-app
   jasper:
     labels:
       - traefik.http.routers.bi.entrypoints=web

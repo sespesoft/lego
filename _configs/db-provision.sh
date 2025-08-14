@@ -21,3 +21,4 @@ EOSQL
 create_database_if_not_exists "$APP_DB_NAME" "$APP_DB_USER" "$APP_DB_PASSWORD"
 create_database_if_not_exists "$BI_DB_NAME" "$BI_DB_USER" "$BI_DB_PASSWORD"
 create_database_if_not_exists "$GF_DB_NAME" "$GF_DB_USER" "$GF_DB_PASSWORD"
+create_database_if_not_exists "$SS_DB_NAME" "$SS_DB_USER" "$SS_DB_PASSWORD"

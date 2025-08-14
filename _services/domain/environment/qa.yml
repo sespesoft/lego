@@ -16,10 +16,6 @@ x-config-srv: &config-srv
 x-config-job: &config-job
   restart: on-failure
   depends_on:
-    db:
-      condition: service_healthy
-    rabbitmq:
-      condition: service_healthy
   deploy:
       mode: replicated
       replicas: 1
@@ -28,8 +24,6 @@ x-config-job: &config-job
         delay: 15s
         max_attempts: 5
         window: 120s
-      placement:
-        constraints: [node.role == manager]
 services:
   webapp:
     image: ${WEBAPP_IMAGE}

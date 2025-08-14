@@ -16,6 +16,9 @@ services:
       GF_DB_NAME: ${GF_DB_NAME}
       GF_DB_USER: ${GF_DB_USER}
       GF_DB_PASSWORD: ${GF_DB_PASSWORD}
+      SS_DB_NAME: ${SS_DB_NAME}
+      SS_DB_USER: ${SS_DB_USER}
+      SS_DB_PASSWORD: ${SS_DB_PASSWORD}
     restart: unless-stopped
     healthcheck:
       test: [CMD-SHELL, "pg_isready --username=${DB_USER} --dbname=${DB_NAME}"]
