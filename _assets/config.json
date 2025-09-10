@@ -5,5 +5,6 @@
     "hiring": "http://hiring.localhost/",
     "pgaudit": "http://pgaudit.localhost/",
     "geo": "http://geo.localhost/",
+    "notify": "http://notify.localhost/",
     "siteKey": ""
 }

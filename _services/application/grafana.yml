@@ -8,6 +8,8 @@ services:
       service: grafana
     image: grafana/grafana:12.1.0
     environment:
+      GF_SERVER_DOMAIN: grafana.${DOMAIN}
+      GF_SERVER_ROOT_URL: ${PROTOCOL}://grafana.${DOMAIN}
       GF_DATABASE_TYPE: postgres
       GF_DATABASE_HOST: ${GF_DB_HOST}
       GF_DATABASE_NAME: ${GF_DB_NAME}
@@ -32,11 +34,17 @@ services:
       - traefik.enable=true
       - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN}`)
       - traefik.http.services.grafana.loadbalancer.server.port=3000
+      - traefik.http.routers.grafana.middlewares=grafana-cors
+      - traefik.http.middlewares.grafana-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST
+      - traefik.http.middlewares.grafana-cors.headers.accesscontrolalloworiginlist=${PROTOCOL}://${DOMAIN}
+      - traefik.http.middlewares.grafana-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.grafana-cors.headers.addvaryheader=true
+      - traefik.http.middlewares.grafana-cors.headers.accesscontrolallowcredentials=true
   superset:
     extends:
       file: ./environment/${ENV}.yml
       service: superset
-    image: apache/superset:GHA-dev-16966432438
+    image: apache/superset:5.0.0-dev
     container_name: app-superset
     depends_on:
       db:
@@ -46,7 +54,7 @@ services:
     environment:
       - POSTGRES_USER=${SS_DB_USER}
       - POSTGRES_PASSWORD=${SS_DB_PASSWORD}
-      - POSTGRES_DB=${SS__DB_NAME}
+      - POSTGRES_DB=${SS_DB_NAME}
       - POSTGRES_HOST=${DB_HOST}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_HOST=${REDIS_HOST}
@@ -70,6 +78,12 @@ services:
       - traefik.enable=true
       - traefik.http.routers.superset.rule=Host(`superset.${DOMAIN}`)
       - traefik.http.services.superset.loadbalancer.server.port=8088
+      - traefik.http.routers.superset.middlewares=superset-cors
+      - traefik.http.middlewares.superset-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST
+      - traefik.http.middlewares.superset-cors.headers.accesscontrolalloworiginlist=${PROTOCOL}://${DOMAIN}
+      - traefik.http.middlewares.superset-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.superset-cors.headers.addvaryheader=true
+      - traefik.http.middlewares.superset-cors.headers.accesscontrolallowcredentials=true
 volumes:
   grafana_data:
   superset_data:
