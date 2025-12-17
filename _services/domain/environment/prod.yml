@@ -30,6 +30,10 @@ services:
       - traefik.http.routers.webapp.entrypoints=websecure
       - traefik.http.routers.webapp.tls=true
       - traefik.http.routers.webapp.tls.certresolver=le
+      - traefik.http.middlewares.rate-limit.ratelimit.average=300
+      - traefik.http.middlewares.rate-limit.ratelimit.burst=50
+      - traefik.http.middlewares.rate-limit.ratelimit.period=1m
+      - traefik.http.routers.webapp.middlewares=rate-limit
     <<: *config-srv
   audit:
     image: ${AUDIT_IMAGE}
@@ -37,6 +41,7 @@ services:
       - traefik.http.routers.audit.entrypoints=websecure
       - traefik.http.routers.audit.tls=true
       - traefik.http.routers.audit.tls.certresolver=le
+      - traefik.http.routers.audit.middlewares=rate-limit
   job_audit:
     image: ${AUDIT_IMAGE}
     <<: *config-job
@@ -46,6 +51,7 @@ services:
       - traefik.http.routers.auth.entrypoints=websecure
       - traefik.http.routers.auth.tls=true
       - traefik.http.routers.auth.tls.certresolver=le
+      - traefik.http.routers.auth.middlewares=rate-limit
     <<: *config-srv
   job_auth:
     image: ${AUTH_IMAGE}
@@ -56,6 +62,7 @@ services:
       - traefik.http.routers.geo.entrypoints=websecure
       - traefik.http.routers.geo.tls=true
       - traefik.http.routers.geo.tls.certresolver=le
+      - traefik.http.routers.geo.middlewares=rate-limit
     <<: *config-srv
   job_geo:
     image: ${CONF_IMAGE}
@@ -66,6 +73,7 @@ services:
       - traefik.http.routers.hiring.entrypoints=websecure
       - traefik.http.routers.hiring.tls=true
       - traefik.http.routers.hiring.tls.certresolver=le
+      - traefik.http.routers.hiring.middlewares=rate-limit
     <<: *config-srv
   job_hiring:
     image: ${HIRING_IMAGE}
@@ -76,6 +84,7 @@ services:
       - traefik.http.routers.pga.entrypoints=websecure
       - traefik.http.routers.pga.tls=true
       - traefik.http.routers.pga.tls.certresolver=le
+      - traefik.http.routers.pga.middlewares=rate-limit
     <<: *config-srv
   job_pgaudit:
     image: ${PGAUDIT_IMAGE}
@@ -86,6 +95,7 @@ services:
       - traefik.http.routers.pqr.entrypoints=websecure
       - traefik.http.routers.pqr.tls=true
       - traefik.http.routers.pqr.tls.certresolver=le
+      - traefik.http.routers.pqr.middlewares=rate-limit
     <<: *config-srv
   job_pqrs:
     image: ${PQRS_IMAGE}
@@ -99,10 +109,12 @@ services:
       - traefik.http.routers.notify.entrypoints=websecure
       - traefik.http.routers.notify.tls=true
       - traefik.http.routers.notify.tls.certresolver=le
+      - traefik.http.routers.notify.middlewares=rate-limit
     <<: *config-srv
   soketi:
     labels:
       - traefik.http.routers.soketi.entrypoints=websecure
       - traefik.http.routers.soketi.tls=true
       - traefik.http.routers.soketi.tls.certresolver=le
+      - traefik.http.routers.soketi.middlewares=rate-limit
     <<: *config-srv
