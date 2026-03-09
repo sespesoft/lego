@@ -1,5 +1,3 @@
-include:
-  - ../infraestructure/redis.yml
 services:
   notify:
     extends:

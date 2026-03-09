@@ -3,7 +3,10 @@ include:
   - _services/infraestructure/database.yml
   - _services/infraestructure/minio.yml
   - _services/infraestructure/rabbitmq.yml
+  - _services/infraestructure/redis.yml
   - _services/application/grafana.yml
+  - _services/application/grafana-bi.yml
+  #- _services/application/superset.yml
   - _services/application/jasper.yml
   - _services/application/pgadmin.yml
   - _services/application/n8n.yml

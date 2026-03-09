@@ -6,6 +6,7 @@ pgaudit-api
 webapp
 geo
 notify-soketi
+bi-grafana
 _services/application/storage
 _services/application/n8n
 _services/infraestructure/letsencrypt

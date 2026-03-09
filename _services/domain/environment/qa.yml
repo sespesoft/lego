@@ -1,7 +1,7 @@
 x-config-srv: &config-srv
   restart: unless-stopped
   deploy:
-    replicas: 2
+    replicas: 1
     update_config:
       parallelism: 1
       order: start-first
@@ -15,7 +15,6 @@ x-config-srv: &config-srv
     start_period: 40s
 x-config-job: &config-job
   restart: on-failure
-  depends_on:
   deploy:
       mode: replicated
       replicas: 1

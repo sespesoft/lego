@@ -1,0 +1,47 @@
+services:
+  superset:
+    extends:
+      file: ./environment/${ENV}.yml
+      service: superset
+    image: apache/superset:5.0.0-dev
+    container_name: app-superset
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - POSTGRES_USER=${SS_DB_USER}
+      - POSTGRES_PASSWORD=${SS_DB_PASSWORD}
+      - POSTGRES_DB=${SS_DB_NAME}
+      - POSTGRES_HOST=${DB_HOST}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - SUPERSET_SECRET_KEY=uvwvNnQBIyfwglGQPYXJYGmRQpFgQkvx
+      - ADMIN_USERNAME=admin
+      - ADMIN_FIRSTNAME=Superset
+      - ADMIN_LASTNAME=Admin
+      - ADMIN_EMAIL=admin@sespesoft.com
+      - ADMIN_PASSWORD=Qazwsx*
+      - PYTHONPATH=/app/superset
+    profiles:
+      - all
+      - app
+    restart: unless-stopped
+    volumes:
+      - superset_data:/app/superset_home
+      - ../../_configs/superset_entrypoint.sh:/app/superset_entrypoint.sh
+      - ../../_configs/superset_config.py:/app/superset/superset_config.py
+    entrypoint: [/app/superset_entrypoint.sh]
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.superset.rule=Host(`superset.${DOMAIN}`)
+      - traefik.http.services.superset.loadbalancer.server.port=8088
+      - traefik.http.routers.superset.middlewares=superset-cors
+      - traefik.http.middlewares.superset-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST
+      - traefik.http.middlewares.superset-cors.headers.accesscontrolalloworiginlist=${PROTOCOL}://${DOMAIN}
+      - traefik.http.middlewares.superset-cors.headers.accesscontrolmaxage=100
+      - traefik.http.middlewares.superset-cors.headers.addvaryheader=true
+      - traefik.http.middlewares.superset-cors.headers.accesscontrolallowcredentials=true
+volumes:
+  superset_data:

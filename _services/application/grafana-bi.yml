@@ -1,0 +1,31 @@
+services:
+  grafana-bi:
+    container_name: grafana-bi
+    extends:
+      file: ./environment/${ENV}.yml
+      service: grafana-bi
+    environment:
+      APP_URL: ${PROTOCOL}://${DOMAIN}
+      PATH_PUBLICKEY: ${PUB_KEY}
+      GRAFANA_API_KEY: ${GF_API_KEY}
+      GRAFANA_URL: http://grafana
+    profiles:
+      - all
+      - app
+  grafana-setup:
+    image: postgres:14.1-alpine
+    volumes:
+      - ../../_configs/gf-provision.sh:/setup.sh
+    environment:
+      DB_HOST: ${GF_DB_HOST:-db}
+      DB_USER: ${GF_DB_USER:-postgres}
+      DB_PASSWORD: ${GF_DB_PASSWORD:-postgres}
+      DB_PORT: ${GF_DB_PORT:-5432}
+      DB_NAME: ${GF_DB_NAME:-grafana}
+    profiles:
+      - all
+      - job
+    entrypoint: ["/bin/sh", "/setup.sh"]
+    depends_on:
+      db:
+        condition: service_healthy
