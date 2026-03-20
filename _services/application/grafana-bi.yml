@@ -12,6 +12,10 @@ services:
     profiles:
       - all
       - app
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bigrafana.rule=Host(`bigrafana.${DOMAIN}`)
+      - traefik.http.services.bigrafana.loadbalancer.server.port=80
   grafana-setup:
     image: postgres:14.1-alpine
     volumes:

@@ -8,11 +8,11 @@ services:
     labels:
       - traefik.http.routers.grafana.entrypoints=web
     <<: *config-app
-  garafa-bi:
+  grafana-bi:
     build:
-      context: ../../../auth
+      context: ../../../bi-grafana
     labels:
-      - traefik.http.routers.bi.entrypoints=web
+      - traefik.http.routers.bigrafana.entrypoints=web
     <<: *config-app
   superset:
     labels:
