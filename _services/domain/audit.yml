@@ -7,8 +7,6 @@ services:
       - APP_NAME=${APP_NAME}
       - APP_ENV=production
       - LOG_CHANNEL=stderr
-      - APP_KEY=base64:oriD7ArC+WCHI5dF+x+t8DR6UTmdjC8cv376Yn7XW+k=
-      - JWT_SECRET=QoYtsdMSoIMLQ1drwQW4f1Sx5wqkVgmLAwcPDPd2NNdYb1IUe0ayQjo97wZJqtOy
       - APP_URL=audit.${DOMAIN}
       - FRONTEND_URL=${PROTOCOL}://${DOMAIN}/
       - URL_AUTH=http://auth/

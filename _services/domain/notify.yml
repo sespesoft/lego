@@ -36,7 +36,7 @@ services:
       - traefik.enable=true
       - traefik.http.services.notify.loadbalancer.server.port=80
       - traefik.http.routers.notify.priority=10
-      - traefik.http.routers.notify.rule=Host(`notify.${DOMAIN}`) && PathPrefix(`/history`) || PathPrefix(`/auth`)
+      - traefik.http.routers.notify.rule=(Host(`notify.${DOMAIN}`) && PathPrefix(`/history`)) || (Host(`notify.${DOMAIN}`) && PathPrefix(`/auth`))
       - service.role=app
   soketi:
     extends:

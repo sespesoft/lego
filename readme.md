@@ -70,8 +70,8 @@ with:
 openssl genrsa -out priv_key.pem 2048
 openssl rsa -in priv_key.pem -pubout -out pub_key.pem
 ```
-
-_:warning: Never use sample keys in the `_configs` folder in production._
+> [!CAUTION]
+> Never use sample keys in the `_configs` folder in production._
 
 ### Upload secrets and configs
 
