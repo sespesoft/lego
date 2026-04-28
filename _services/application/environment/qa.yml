@@ -16,9 +16,9 @@ services:
   grafana-bi:
     image: ${GRAFANA_IMAGE}
     labels:
-      - traefik.http.routers.superset.entrypoints=websecure
-      - traefik.http.routers.superset.tls=true
-      - traefik.http.routers.superset.tls.certresolver=le
+      - traefik.http.routers.bigrafana.entrypoints=websecure
+      - traefik.http.routers.bigrafana.tls=true
+      - traefik.http.routers.bigrafana.tls.certresolver=le
   superset:
     labels:
       - traefik.http.routers.superset.entrypoints=websecure
