@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PGPASSWORD=${GF_DB_PASSWORD:-"postgres"}
+export PGPASSWORD=${DB_PASSWORD:-"postgres"}
 
 echo "Iniciando script de configuración de Token para Grafana..."
 

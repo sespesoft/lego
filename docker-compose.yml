@@ -6,7 +6,7 @@ include:
   - _services/infraestructure/redis.yml
   - _services/application/grafana.yml
   - _services/application/grafana-bi.yml
-  #- _services/application/superset.yml
+  # - _services/application/superset.yml
   - _services/application/jasper.yml
   - _services/application/pgadmin.yml
   - _services/application/n8n.yml
@@ -35,3 +35,9 @@ secrets:
 configs:
   pub_key:
     file: ./_configs/pub.key
+# networks:
+#  default:
+#    enable_ipv6: true
+#    ipam:
+#      config:
+#        - subnet: "fd00:d0ca:2::/64"

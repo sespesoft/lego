@@ -19,6 +19,7 @@ services:
       - traefik.http.routers.bigrafana.entrypoints=websecure
       - traefik.http.routers.bigrafana.tls=true
       - traefik.http.routers.bigrafana.tls.certresolver=le
+    <<: *config-app
   superset:
     labels:
       - traefik.http.routers.superset.entrypoints=websecure
