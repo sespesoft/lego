@@ -7,5 +7,6 @@
     "pgaudit": "https://pgaudit.test.sespesoft.com/",
     "geo": "https://geo.test.sespesoft.com/",
     "notify": "https://notify.test.sespesoft.com/",
+    "garafana": "https://bigrafana.test.sespesoft.com/",
     "siteKey": "6LeytpwrAAAAALGZvFiU_XuJsTX6Alrae2UqfdEX"
 }

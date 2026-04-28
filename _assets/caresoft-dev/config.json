@@ -7,5 +7,6 @@
     "pgaudit": "https://pgaudit.care.sespesoft.com/",
     "geo": "https://geo.care.sespesoft.com/",
     "notify": "https://notify.care.sespesoft.com/",
+    "grafana": "https://bigrafana.care.sespesoft.com/",
     "siteKey": "6LfGSscqAAAAALLPE_46qq-2IeGMi9wGKJDRcvqd"
 }
