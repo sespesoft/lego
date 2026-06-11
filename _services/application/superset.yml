@@ -18,12 +18,14 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_HOST=${REDIS_HOST}
       - PATH_PUBLICKEY=${PUB_KEY}
-      - SUPERSET_SECRET_KEY=uvwvNnQBIyfwglGQPYXJYGmRQpFgQkvx
+      - SUPERSET_SECRET_KEY=${SS_SECRET_KEY}
+      - RECAPTCHA_PULIC_KEY=${RECAPTCHA_PUB}
+      - RECAPTCHA_PRIVATE_KEY=${RECAPTCHA_PRIV}
       - ADMIN_USERNAME=admin
       - ADMIN_FIRSTNAME=Superset
       - ADMIN_LASTNAME=Admin
-      - ADMIN_EMAIL=admin@sespesoft.com
-      - ADMIN_PASSWORD=Qazwsx*
+      - ADMIN_EMAIL=${USER_MAIL}
+      - ADMIN_PASSWORD=${SS_ADMIN_PASSWORD}
       - PYTHONPATH=/app/superset
     profiles:
       - all

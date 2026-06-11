@@ -3,6 +3,7 @@ import jwt
 from flask import request, g
 from flask_login import login_user
 from flask_appbuilder.security.manager import AUTH_DB
+from superset import db
 from superset.security import SupersetSecurityManager
 from celery.schedules import crontab
 
@@ -11,6 +12,8 @@ POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "postgres")
 POSTGRES_PORT = os.environ.get("POSTGRES_PORT", "5432")
 POSTGRES_DB = os.environ.get("POSTGRES_DB")
+RECAPTCHA_PUBLIC_KEY = os.environ.get("RECAPTCHA_PUBLIC_KEY")
+RECAPTCHA_PRIVATE_KEY = os.environ.get("RECAPTCHA_PRIVATE_KEY")
 SQLALCHEMY_DATABASE_URI = (
     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@"
     f"{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
@@ -20,6 +23,9 @@ REDIS_HOST = os.environ.get("REDIS_HOST", "redis")
 REDIS_PORT = os.environ.get("REDIS_PORT", "6379")
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", "")
 REDIS_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}"
+FAB_API_ALLOWED_FIELD_FILTERS = ["id", "name", "username", "first_name", "last_name"]
+FAB_API_ALLOWED_REL_FIELDS = {"permission": ["id", "name"], "view_menu": ["id", "name"]}
+FAB_ADD_SECURITY_PERMISSION_VIEWS = True
 
 JWT_ALGORITHM = "RS256"
 pub_key_path = os.environ.get("PATH_PUBLICKEY")
@@ -40,6 +46,8 @@ class MySecurityManager(SupersetSecurityManager):
 
         @appbuilder.app.before_request
         def before_request_auth():
+            if g.get("user") and g.user.is_authenticated:
+                return
             auth_header = request.headers.get("Authorization")
             if auth_header and auth_header.startswith("Bearer "):
                 token = auth_header.split(" ")[1]
@@ -56,6 +64,15 @@ class MySecurityManager(SupersetSecurityManager):
                 except Exception:
                     pass
 
+    def load_user(self, pk):
+        try:
+            return self.get_user_by_id(int(pk))
+        except (ValueError, TypeError):
+            return self.find_user(username=str(pk)) or self.find_user(email=str(pk))
+
+    def load_user_jwt(self, _jwt_header, jwt_data):
+        return self._get_or_create_jwt_user(jwt_data)
+
     def ensure_reader_role_exists(self):
         role_name = "reader"
         role = self.find_role(role_name)
@@ -65,7 +82,7 @@ class MySecurityManager(SupersetSecurityManager):
             ("can_read", "Dashboard"),
             ("can_read", "Chart"),
             ("can_read", "Dataset"),
-            ("menu_access", "Dashboards"),
+            ("all_database_access", "all_database_access"),
         ]
         role_changed = False
         for perm_name, view_name in perms:
@@ -74,23 +91,30 @@ class MySecurityManager(SupersetSecurityManager):
                 role.permissions.append(pv)
                 role_changed = True
         if role_changed:
-            self.get_session.commit()
+            db.session.commit()
         return role
 
     def _get_or_create_jwt_user(self, payload):
         email = payload.get("email")
-        username = payload.get("username")
+        if not email:
+            return None
         user = self.find_user(email=email)
         if not user:
-            role = self.ensure_reader_role_exists()
-            user = self.add_user(
-                username=email,
-                first_name=payload.get("first_name", username),
-                last_name=payload.get("last_name", "wuser"),
-                email=email,
-                role=[role]
-            )
-            self.get_session.commit()
+            try:
+                role = self.ensure_reader_role_exists()
+                fname = payload.get("first_name") or payload.get("username") or "JWT"
+                lname = payload.get("last_name") or "User"
+                user = self.add_user(
+                    username=email,
+                    first_name=payload.get("first_name", fname),
+                    last_name=payload.get("last_name", lname),
+                    email=email,
+                    role=[role]
+                )
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+                return None
         if user:
             g.user = user
         return user
