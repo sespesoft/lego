@@ -9,7 +9,6 @@ services:
       - LOG_CHANNEL=stderr
       - APP_URL=audit.${DOMAIN}
       - FRONTEND_URL=${PROTOCOL}://${DOMAIN}/
-      - URL_AUTH=http://auth/
       - DB_CONNECTION=pgsql
       - DB_HOST=${DB_HOST}
       - DB_PORT=5432

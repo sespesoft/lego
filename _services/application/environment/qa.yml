@@ -13,13 +13,6 @@ services:
       - traefik.http.routers.grafana.tls=true
       - traefik.http.routers.grafana.tls.certresolver=le
     <<: *config-app
-  grafana-bi:
-    image: ${GRAFANA_IMAGE}
-    labels:
-      - traefik.http.routers.bigrafana.entrypoints=websecure
-      - traefik.http.routers.bigrafana.tls=true
-      - traefik.http.routers.bigrafana.tls.certresolver=le
-    <<: *config-app
   superset:
     labels:
       - traefik.http.routers.superset.entrypoints=websecure

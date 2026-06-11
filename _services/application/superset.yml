@@ -3,7 +3,7 @@ services:
     extends:
       file: ./environment/${ENV}.yml
       service: superset
-    image: apache/superset:5.0.0-dev
+    image: apache/superset:6.1.0
     container_name: app-superset
     depends_on:
       db:
@@ -17,6 +17,7 @@ services:
       - POSTGRES_HOST=${DB_HOST}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_HOST=${REDIS_HOST}
+      - PATH_PUBLICKEY=${PUB_KEY}
       - SUPERSET_SECRET_KEY=uvwvNnQBIyfwglGQPYXJYGmRQpFgQkvx
       - ADMIN_USERNAME=admin
       - ADMIN_FIRSTNAME=Superset
@@ -27,6 +28,9 @@ services:
     profiles:
       - all
       - app
+    configs:
+      - source: pub_key
+        target: /rsa/pub/key.pem
     restart: unless-stopped
     volumes:
       - superset_data:/app/superset_home
@@ -38,6 +42,7 @@ services:
       - traefik.http.routers.superset.rule=Host(`superset.${DOMAIN}`)
       - traefik.http.services.superset.loadbalancer.server.port=8088
       - traefik.http.routers.superset.middlewares=superset-cors
+      - traefik.http.middlewares.superset-cors.headers.accesscontrolallowheaders=Authorization,Content-Type,X-Requested-With,X-CSRFToken
       - traefik.http.middlewares.superset-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST
       - traefik.http.middlewares.superset-cors.headers.accesscontrolalloworiginlist=${PROTOCOL}://${DOMAIN}
       - traefik.http.middlewares.superset-cors.headers.accesscontrolmaxage=100
