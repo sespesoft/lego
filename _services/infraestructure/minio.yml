@@ -24,7 +24,7 @@ services:
       mode: replicated
       replicas: 1
       placement:
-        constraints: 
+        constraints:
           - node.role == manager
   job_minio:
     image: minio/mc
@@ -46,6 +46,8 @@ services:
       - all
       - job
     restart: on-failure
+    labels:
+      - service.role=job
     deploy:
       mode: replicated
       replicas: 1

@@ -59,8 +59,6 @@ services:
     environment:
       - APP_NAME=${APP_NAME}
       - APP_ENV=local
-      - APP_KEY=base64:oriD7ArC+WCHI5dF+x+t8DR6UTmdjC8cv376Yn7XW+k=
-      - JWT_SECRET=QoYtsdMSoIMLQ1drwQW4f1Sx5wqkVgmLAwcPDPd2NNdYb1IUe0ayQjo97wZJqtOy
       - APP_URL=audit.${DOMAIN}
       - DB_CONNECTION=pgsql
       - DB_HOST=${DB_HOST}

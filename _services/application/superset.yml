@@ -24,7 +24,7 @@ services:
       - ADMIN_USERNAME=admin
       - ADMIN_FIRSTNAME=Superset
       - ADMIN_LASTNAME=Admin
-      - ADMIN_EMAIL=${USER_MAIL}
+      - ADMIN_EMAIL=${MAIL_USER}
       - ADMIN_PASSWORD=${SS_ADMIN_PASSWORD}
       - PYTHONPATH=/app/superset
     profiles:
