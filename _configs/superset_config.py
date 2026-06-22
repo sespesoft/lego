@@ -44,10 +44,11 @@ class MySecurityManager(SupersetSecurityManager):
         def user_lookup_callback(_jwt_header, jwt_data):
             return self._get_or_create_jwt_user(jwt_data)
 
-        @appbuilder.app.before_request
-        def before_request_auth():
-            if g.get("user") and g.user.is_authenticated:
-                return
+    def has_access(self, permission_name, view_name):
+        import jwt
+        from flask import request, g
+        from flask_login import current_user, login_user
+        if current_user.is_anonymous and request.method != "OPTIONS":
             auth_header = request.headers.get("Authorization")
             if auth_header and auth_header.startswith("Bearer "):
                 token = auth_header.split(" ")[1]
@@ -61,8 +62,10 @@ class MySecurityManager(SupersetSecurityManager):
                     user = self._get_or_create_jwt_user(payload)
                     if user:
                         login_user(user, remember=False)
+                        g.user = user
                 except Exception:
                     pass
+        return super().has_access(permission_name, view_name)
 
     def load_user(self, pk):
         try:
@@ -73,35 +76,34 @@ class MySecurityManager(SupersetSecurityManager):
     def load_user_jwt(self, _jwt_header, jwt_data):
         return self._get_or_create_jwt_user(jwt_data)
 
-    def ensure_reader_role_exists(self):
-        role_name = "reader"
-        role = self.find_role(role_name)
-        if not role:
-            role = self.add_role(role_name)
-        perms = [
-            ("can_read", "Dashboard"),
-            ("can_read", "Chart"),
-            ("can_read", "Dataset"),
-            ("all_database_access", "all_database_access"),
-        ]
-        role_changed = False
-        for perm_name, view_name in perms:
-            pv = self.find_permission_view_menu(perm_name, view_name)
-            if pv and pv not in role.permissions:
-                role.permissions.append(pv)
-                role_changed = True
-        if role_changed:
-            db.session.commit()
-        return role
-
     def _get_or_create_jwt_user(self, payload):
         email = payload.get("email")
         if not email:
             return None
+        roles_to_assign = []
+        company_data = payload.get("company_id")
+        empresas = company_data if company_data is not None else []
+        if not isinstance(empresas, list):
+            empresas = [empresas]
+        for cid in empresas:
+            company_role = self.find_role(str(cid))
+            if company_role:
+                roles_to_assign.append(company_role)
+        if not roles_to_assign:
+            public_role = self.find_role("Public")
+            if not public_role:
+                public_role = self.add_role("Public")
+                try:
+                    db.session.commit()
+                except Exception:
+                    db.session.rollback()
+            if public_role:
+                roles_to_assign.append(public_role)
+        if not roles_to_assign:
+            return None
         user = self.find_user(email=email)
         if not user:
             try:
-                role = self.ensure_reader_role_exists()
                 fname = payload.get("first_name") or payload.get("username") or "JWT"
                 lname = payload.get("last_name") or "User"
                 user = self.add_user(
@@ -109,18 +111,23 @@ class MySecurityManager(SupersetSecurityManager):
                     first_name=payload.get("first_name", fname),
                     last_name=payload.get("last_name", lname),
                     email=email,
-                    role=[role]
+                    role=roles_to_assign
                 )
                 db.session.commit()
             except Exception:
                 db.session.rollback()
                 return None
-        if user:
-            g.user = user
+        else:
+            try:
+                user.roles = roles_to_assign
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+        g.user = user
         return user
 
 AUTH_USER_REGISTRATION = True
-AUTH_USER_REGISTRATION_ROLE = "reader"
+AUTH_USER_REGISTRATION_ROLE = "Public"
 CUSTOM_SECURITY_MANAGER = MySecurityManager
 AUTH_TYPE = AUTH_DB
 
@@ -152,7 +159,6 @@ CELERY_CONFIG = CeleryConfig
 FEATURE_FLAGS = {
     "ENABLE_TEMPLATE_PROCESSING": True,
     "ALLOW_FILE_UPLOAD": True,
-    "EMBEDDED_SUPERSET": True,
-    "TAGGING_SYSTEM": True,
+    "DASHBOARD_RBAC": True,
 }
 RATELIMIT_STORAGE_URI = f"{REDIS_URL}/3"

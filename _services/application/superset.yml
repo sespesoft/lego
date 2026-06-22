@@ -5,11 +5,6 @@ services:
       service: superset
     image: apache/superset:6.1.0
     container_name: app-superset
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
     environment:
       - POSTGRES_USER=${SS_DB_USER}
       - POSTGRES_PASSWORD=${SS_DB_PASSWORD}
