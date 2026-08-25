@@ -6,17 +6,17 @@ services:
     image: docker.n8n.io/n8nio/n8n
     container_name: app-n8n
     environment:
-      - N8N_HOST=n8n.${DOMAIN}
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=${PROTOCOL}
-      - NODE_ENV=production
-      - WEBHOOK_URL=${PROTOCOL}://n8n.${DOMAIN}/
-      - GENERIC_TIMEZONE=${TIMEZONE}
-      - N8N_TRUST_PROXY=true
-      - N8N_RUNNERS_ENABLED=true
-      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-      - DB_SQLITE_POOL_SIZE=5
-      - N8N_PROXY_HOPS=1
+      N8N_HOST: n8n.${DOMAIN}
+      N8N_PORT: 5678
+      N8N_PROTOCOL: ${PROTOCOL}
+      NODE_ENV: production
+      WEBHOOK_URL: ${PROTOCOL}://n8n.${DOMAIN}/
+      GENERIC_TIMEZONE: ${TIMEZONE}
+      N8N_TRUST_PROXY: true
+      N8N_RUNNERS_ENABLED: true
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
+      DB_SQLITE_POOL_SIZE: 5
+      N8N_PROXY_HOPS: 1
     volumes:
       - n8n_data:/home/node/.n8n
       - ./n8n:/files
@@ -27,5 +27,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.n8n.rule=Host(`n8n.${DOMAIN}`)
       - traefik.http.services.n8n.loadbalancer.server.port=5678
+      - traefik.http.middlewares.n8n-headers.headers.customrequestheaders.X-Forwarded-Proto=https
+      - traefik.http.routers.n8n.middlewares=n8n-headers
 volumes:
   n8n_data:

@@ -4,21 +4,23 @@ services:
       file: ./environment/${ENV}.yml
       service: hiring
     environment:
-      - APP_URL=${PROTOCOL}://${DOMAIN}
-      - APP_NAME=${APP_NAME}
-      - DB_HOST=${DB_HOST}
-      - DB_DATABASE=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - PATH_PUBLICKEY=${PUB_KEY}
-      - AWS_BUCKET=${AWS_BUCKET}
-      - AWS_DEFAULT_REGION=${AWS_REGION}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET}
-      - AWS_ACCESS_KEY_ID=${AWS_KEY}
-      - MQ_USER=${MQ_USER}
-      - MQ_PASSWORD=${MQ_PASSWORD}
-      - MQ_HOST=${MQ_HOST}
-      - MQ_PORT=${MQ_PORT}
+      APP_URL: ${PROTOCOL}://${DOMAIN}
+      APP_NAME: ${APP_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_DATABASE: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      PATH_PUBLICKEY: ${PUB_KEY}
+      MQ_DRIVE: ${MQ_DRIVE}
+      MQ_USER: ${MQ_USER}
+      MQ_PASSWORD: ${MQ_PASSWORD}
+      MQ_HOST: ${MQ_HOST}
+      MQ_PORT: ${MQ_PORT}
+      AWS_DEFAULT_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
+      AWS_ENDPOINT: ${BUCKET_HOST}
+      AWS_BUCKET: ${BUCKET_NAME}
     restart: unless-stopped
     profiles:
       - all
@@ -37,15 +39,19 @@ services:
       file: ./environment/${ENV}.yml
       service: job_hiring
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_DATABASE=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - PATH_PUBLICKEY=${PUB_KEY}
-      - MQ_USER=${MQ_USER}
-      - MQ_PASSWORD=${MQ_PASSWORD}
-      - MQ_HOST=${MQ_HOST}
-      - MQ_PORT=${MQ_PORT}
+      DB_HOST: ${DB_HOST}
+      DB_DATABASE: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      PATH_PUBLICKEY: ${PUB_KEY}
+      MQ_DRIVE: ${MQ_DRIVE}
+      MQ_USER: ${MQ_USER}
+      MQ_PASSWORD: ${MQ_PASSWORD}
+      MQ_HOST: ${MQ_HOST}
+      MQ_PORT: ${MQ_PORT}
+      AWS_DEFAULT_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
     user: application
     profiles:
       - all
@@ -56,7 +62,7 @@ services:
       - |
         set -e
         php app/ice dbup --schema=[!t]* --tag=hiring
-        php app/ice configure-rabbitmq
+        php app/ice configure-message-queue
     restart: on-failure
     labels:
       - service.role=job

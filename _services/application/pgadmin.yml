@@ -8,9 +8,9 @@ services:
     volumes:
       - ./storage:/var/lib/pgadmin/storage
     environment:
-      - PGADMIN_CONFIG_WTF_CSRF_CHECK_DEFAULT=False
-      - PGADMIN_DEFAULT_EMAIL=admin@sespesoft.com
-      - PGADMIN_DEFAULT_PASSWORD=Qazwsx*
+      PGADMIN_CONFIG_WTF_CSRF_CHECK_DEFAULT: False
+      PGADMIN_DEFAULT_EMAIL: admin@sespesoft.com
+      PGADMIN_DEFAULT_PASSWORD: Qazwsx*
     profiles:
       - all
       - app

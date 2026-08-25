@@ -4,42 +4,45 @@ services:
       file: ./environment/${ENV}.yml
       service: audit
     environment:
-      - APP_NAME=${APP_NAME}
-      - APP_ENV=production
-      - LOG_CHANNEL=stderr
-      - APP_URL=audit.${DOMAIN}
-      - FRONTEND_URL=${PROTOCOL}://${DOMAIN}/
-      - DB_CONNECTION=pgsql
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=5432
-      - DB_DATABASE=${DB_NAME}
-      - DB_USERNAME=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - BROADCAST_DRIVER=log
-      - CACHE_DRIVER=file
-      - QUEUE_CONNECTION=sync
-      - MAIL_MAILER=smtp
-      - MAIL_HOST=${MAIL_HOST}
-      - MAIL_PORT=${MAIL_PORT}
-      - MAIL_USERNAME=${MAIL_USER}
-      - MAIL_PASSWORD=${MAIL_PASSWORD}
-      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
-      - MAIL_FROM_ADDRESS=${MAIL_USER}
-      - MAIL_FROM_NAME=${APP_NAME}
-      - AWS_ACCESS_KEY_ID=${AWS_KEY}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET}
-      - AWS_DEFAULT_REGION=${AWS_REGION}
-      - AWS_BUCKET=${AWS_BUCKET}
-      - UPLOAD_DOCUMENT=s3
-      - FILE_PUBKEY=/keys/key.pem
-      - BI_HOST=${BI_HOST}
-      - BI_USER=${BI_USER}
-      - BI_PASSWORD=${BI_PASSWORD}
-      - BI_FOLDER=${BI_FOLDER}
-      - MQ_USER=${MQ_USER}
-      - MQ_PASSWORD=${MQ_PASSWORD}
-      - MQ_HOST=${MQ_HOST}
-      - MQ_PORT=${MQ_PORT}
+      APP_NAME: ${APP_NAME}
+      APP_ENV: production
+      LOG_CHANNEL: stderr
+      APP_URL: audit.${DOMAIN}
+      FRONTEND_URL: ${PROTOCOL}://${DOMAIN}/
+      DB_CONNECTION: pgsql
+      DB_HOST: ${DB_HOST}
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_NAME}
+      DB_USERNAME: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      BROADCAST_DRIVER: log
+      CACHE_DRIVER: file
+      QUEUE_CONNECTION: sync
+      MAIL_MAILER: smtp
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_ENCRYPTION: ${MAIL_ENCRYPTION:-tls}
+      MAIL_FROM_ADDRESS: ${MAIL_USER}
+      MAIL_FROM_NAME: ${APP_NAME}
+      UPLOAD_DOCUMENT: s3
+      FILE_PUBKEY: /keys/key.pem
+      BI_HOST: ${BI_HOST}
+      BI_USER: ${BI_USER}
+      BI_PASSWORD: ${BI_PASSWORD}
+      BI_FOLDER: ${BI_FOLDER}
+      MQ_DRIVE: ${MQ_DRIVE}
+      MQ_USER: ${MQ_USER}
+      MQ_PASSWORD: ${MQ_PASSWORD}
+      MQ_HOST: ${MQ_HOST}
+      MQ_PORT: ${MQ_PORT}
+      AWS_DEFAULT_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
+      AWS_ENDPOINT: ${BUCKET_HOST}
+      AWS_BUCKET: ${BUCKET_NAME}
+    restart: unless-stopped
     profiles:
       - all
       - app
@@ -57,23 +60,28 @@ services:
       file: ./environment/${ENV}.yml
       service: job_audit
     environment:
-      - APP_NAME=${APP_NAME}
-      - APP_ENV=local
-      - APP_URL=audit.${DOMAIN}
-      - DB_CONNECTION=pgsql
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=5432
-      - DB_DATABASE=${DB_NAME}
-      - DB_USERNAME=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - MQ_USER=${MQ_USER}
-      - MQ_PASSWORD=${MQ_PASSWORD}
-      - MQ_HOST=${MQ_HOST}
-      - MQ_PORT=${MQ_PORT}
+      APP_NAME: ${APP_NAME}
+      APP_ENV: local
+      APP_URL: audit.${DOMAIN}
+      DB_CONNECTION: pgsql
+      DB_HOST: ${DB_HOST}
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_NAME}
+      DB_USERNAME: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      MQ_DRIVE: ${MQ_DRIVE}
+      MQ_USER: ${MQ_USER}
+      MQ_PASSWORD: ${MQ_PASSWORD}
+      MQ_HOST: ${MQ_HOST}
+      MQ_PORT: ${MQ_PORT}
+      AWS_DEFAULT_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
     user: application
     profiles:
       - all
       - job
     entrypoint: ./database/migrate.sh
+    restart: on-failure
     labels:
       - service.role=job

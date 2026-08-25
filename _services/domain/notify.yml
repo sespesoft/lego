@@ -22,10 +22,14 @@ services:
       PUSHER_PORT: 6001
       PUSHER_SCHEME: http
       PUSHER_APP_CLUSTER: mt1
+      MQ_DRIVE: ${MQ_DRIVE}
       MQ_USER: ${MQ_USER}
       MQ_PASSWORD: ${MQ_PASSWORD}
       MQ_HOST: ${MQ_HOST}
       MQ_PORT: ${MQ_PORT}
+      AWS_DEFAULT_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
     profiles:
       - all
       - app

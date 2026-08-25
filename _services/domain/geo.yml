@@ -4,15 +4,19 @@ services:
       file: ./environment/${ENV}.yml
       service: geo
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_DATABASE=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - PATH_PUBLICKEY=${PUB_KEY}
-      - MQ_USER=${MQ_USER}
-      - MQ_PASSWORD=${MQ_PASSWORD}
-      - MQ_HOST=${MQ_HOST}
-      - MQ_PORT=${MQ_PORT}
+      DB_HOST: ${DB_HOST}
+      DB_DATABASE: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      PATH_PUBLICKEY: ${PUB_KEY}
+      MQ_DRIVE: ${MQ_DRIVE}
+      MQ_USER: ${MQ_USER}
+      MQ_PASSWORD: ${MQ_PASSWORD}
+      MQ_HOST: ${MQ_HOST}
+      MQ_PORT: ${MQ_PORT}
+      AWS_DEFAULT_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
     restart: unless-stopped
     profiles:
       - all
@@ -31,15 +35,19 @@ services:
       file: ./environment/${ENV}.yml
       service: job_geo
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_DATABASE=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - PATH_PUBLICKEY=${PUB_KEY}
-      - MQ_USER=${MQ_USER}
-      - MQ_PASSWORD=${MQ_PASSWORD}
-      - MQ_HOST=${MQ_HOST}
-      - MQ_PORT=${MQ_PORT}
+      DB_HOST: ${DB_HOST}
+      DB_DATABASE: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      PATH_PUBLICKEY: ${PUB_KEY}
+      MQ_DRIVE: ${MQ_DRIVE}
+      MQ_USER: ${MQ_USER}
+      MQ_PASSWORD: ${MQ_PASSWORD}
+      MQ_HOST: ${MQ_HOST}
+      MQ_PORT: ${MQ_PORT}
+      AWS_DEFAULT_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
     profiles:
       - all
       - job
@@ -50,7 +58,7 @@ services:
       - |
         set -e
         php app/ice dbup --schema=[!t]* --tag=geo
-        php app/ice configure-rabbitmq
+        php app/ice configure-message-queue
     restart: on-failure
     labels:
       - service.role=job
