@@ -114,3 +114,7 @@ services:
       rabbitmq:
         condition: service_healthy
     <<: *config-srv
+  job_notify:
+    build:
+      context: ../../../notify-soketi
+    <<: *config-job

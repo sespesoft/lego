@@ -118,3 +118,6 @@ services:
       - traefik.http.routers.soketi.tls.certresolver=le
       - traefik.http.routers.soketi.middlewares=rate-limit
     <<: *config-srv
+  job_notify:
+    image: ${NOTIFY_IMAGE}
+    <<: *config-job

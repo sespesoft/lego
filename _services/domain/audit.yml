@@ -6,6 +6,7 @@ services:
     environment:
       APP_NAME: ${APP_NAME}
       APP_ENV: production
+      URL_AUTH: http://auth/
       LOG_CHANNEL: stderr
       APP_URL: audit.${DOMAIN}
       FRONTEND_URL: ${PROTOCOL}://${DOMAIN}/
@@ -32,7 +33,7 @@ services:
       BI_USER: ${BI_USER}
       BI_PASSWORD: ${BI_PASSWORD}
       BI_FOLDER: ${BI_FOLDER}
-      MQ_DRIVE: ${MQ_DRIVE}
+      MQ_DRIVER: ${MQ_DRIVER}
       MQ_USER: ${MQ_USER}
       MQ_PASSWORD: ${MQ_PASSWORD}
       MQ_HOST: ${MQ_HOST}
@@ -69,7 +70,7 @@ services:
       DB_DATABASE: ${DB_NAME}
       DB_USERNAME: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      MQ_DRIVE: ${MQ_DRIVE}
+      MQ_DRIVER: ${MQ_DRIVER}
       MQ_USER: ${MQ_USER}
       MQ_PASSWORD: ${MQ_PASSWORD}
       MQ_HOST: ${MQ_HOST}

@@ -22,7 +22,7 @@ services:
       PUSHER_PORT: 6001
       PUSHER_SCHEME: http
       PUSHER_APP_CLUSTER: mt1
-      MQ_DRIVE: ${MQ_DRIVE}
+      MQ_DRIVER: ${MQ_DRIVER}
       MQ_USER: ${MQ_USER}
       MQ_PASSWORD: ${MQ_PASSWORD}
       MQ_HOST: ${MQ_HOST}
@@ -64,3 +64,33 @@ services:
         - traefik.http.routers.soketi.priority=5
         - traefik.http.services.soketi.loadbalancer.server.port=6001
         - service.role=app
+
+  job_notify:
+    extends:
+      file: ./environment/${ENV}.yml
+      service: job_audit
+    environment:
+      APP_NAME: ${APP_NAME}
+      APP_ENV: local
+      APP_URL: audit.${DOMAIN}
+      MQ_DRIVER: ${MQ_DRIVER}
+      MQ_USER: ${MQ_USER}
+      MQ_PASSWORD: ${MQ_PASSWORD}
+      MQ_HOST: ${MQ_HOST}
+      MQ_PORT: ${MQ_PORT}
+      AWS_DEFAULT_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
+    entrypoint: /bin/bash
+    user: application
+    command:
+      - -c 
+      - |
+        set -e
+        php artisan configure-message-queue
+    profiles:
+      - all
+      - job
+    restart: on-failure
+    labels:
+      - service.role=job

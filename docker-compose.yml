@@ -7,7 +7,6 @@ include:
   - _services/application/grafana.yml
   - _services/application/superset.yml
   - _services/application/jasper.yml
-  - _services/application/pgadmin.yml
   - _services/application/n8n.yml
   - _services/domain/auth.yml
   - _services/domain/notify.yml

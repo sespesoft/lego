@@ -2,6 +2,8 @@ services:
   db:
     container_name: infra-db
     image: postgres:14.1-alpine
+    ports:
+      - 127.0.0.1:5432:5432
     volumes:
       - pg_data:/var/lib/postgresql/data
       - ../../_configs/db-provision.sh:/docker-entrypoint-initdb.d/db-provision.sh

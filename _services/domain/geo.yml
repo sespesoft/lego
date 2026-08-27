@@ -9,7 +9,7 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       PATH_PUBLICKEY: ${PUB_KEY}
-      MQ_DRIVE: ${MQ_DRIVE}
+      MQ_DRIVER: ${MQ_DRIVER}
       MQ_USER: ${MQ_USER}
       MQ_PASSWORD: ${MQ_PASSWORD}
       MQ_HOST: ${MQ_HOST}
@@ -40,7 +40,7 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       PATH_PUBLICKEY: ${PUB_KEY}
-      MQ_DRIVE: ${MQ_DRIVE}
+      MQ_DRIVER: ${MQ_DRIVER}
       MQ_USER: ${MQ_USER}
       MQ_PASSWORD: ${MQ_PASSWORD}
       MQ_HOST: ${MQ_HOST}

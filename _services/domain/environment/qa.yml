@@ -107,3 +107,6 @@ services:
       - traefik.http.routers.soketi.tls=true
       - traefik.http.routers.soketi.tls.certresolver=le
     <<: *config-srv
+  job_notify:
+    image: ${NOTIFY_IMAGE}
+    <<: *config-job
