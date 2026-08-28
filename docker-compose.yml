@@ -1,5 +1,6 @@
 include:
   - _services/infraestructure/traefik.yml
+  - _services/infraestructure/maintenance.yml
   - _services/infraestructure/database.yml
   - _services/infraestructure/minio.yml
   - _services/infraestructure/rabbitmq.yml

@@ -34,4 +34,3 @@ while true; do
   SECONDS_WAITED=$((SECONDS_WAITED + CHECK_INTERVAL_SECONDS))
 done
 docker compose --profile app up -d --remove-orphans
-docker image prune -a -f

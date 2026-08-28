@@ -5,12 +5,18 @@ x-deploy-srv: &deploy-srv
     order: start-first
     failure_action: rollback
     delay: 10s
-x-healthcheck-srv: &healthcheck-srv
-  test: ["CMD", "curl", "-f", "http://localhost"]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-  start_period: 40s
+x-config-srv: &config-srv
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 40s
+  loging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
 x-config-job: &config-job
   deploy:
     mode: replicated-job
@@ -23,7 +29,8 @@ x-config-job: &config-job
 services:
   webapp:
     image: ${WEBAPP_IMAGE}
-    healthcheck: *healthcheck-srv
+    <<: *config-srv
+    loging: *loging-srv
     labels: &webapp-tls-labels
       - traefik.http.routers.webapp.tls=true
     deploy:
@@ -31,7 +38,7 @@ services:
       labels: *webapp-tls-labels
   audit:
     image: ${AUDIT_IMAGE}
-    healthcheck: *healthcheck-srv
+    <<: *config-srv
     labels: &audit-tls-labels
       - traefik.http.routers.audit.tls=true
     deploy:
@@ -42,7 +49,7 @@ services:
     <<: *config-job
   auth:
     image: ${AUTH_IMAGE}
-    healthcheck: *healthcheck-srv
+    <<: *config-srv
     labels: &auth-tls-labels
       - traefik.http.routers.auth.tls=true
     deploy:
@@ -53,7 +60,7 @@ services:
     <<: *config-job
   geo:
     image: ${CONF_IMAGE}
-    healthcheck: *healthcheck-srv
+    <<: *config-srv
     labels: &geo-tls-labels
       - traefik.http.routers.geo.tls=true
     deploy:
@@ -64,7 +71,7 @@ services:
     <<: *config-job
   hiring:
     image: ${HIRING_IMAGE}
-    healthcheck: *healthcheck-srv
+    <<: *config-srv
     labels: &hiring-tls-labels
       - traefik.http.routers.hiring.tls=true
     deploy:
@@ -75,7 +82,7 @@ services:
     <<: *config-job
   pgaudit:
     image: ${PGAUDIT_IMAGE}
-    healthcheck: *healthcheck-srv
+    <<: *config-srv
     labels: &pga-tls-labels
       - traefik.http.routers.pga.tls=true
     deploy:
@@ -86,7 +93,7 @@ services:
     <<: *config-job
   pqrs:
     image: ${PQRS_IMAGE}
-    healthcheck: *healthcheck-srv
+    <<: *config-srv
     labels: &pqrs-tls-labels
       - traefik.http.routers.pqr.tls=true
     deploy:
@@ -100,14 +107,14 @@ services:
     environment:
       APP_ENV: production
       APP_DEBUG: false
-    healthcheck: *healthcheck-srv
+    <<: *config-srv
     labels: &notify-tls-labels
       - traefik.http.routers.notify.tls=true
     deploy:
       <<: *deploy-srv
       labels: *notify-tls-labels
   soketi:
-    healthcheck: *healthcheck-srv
+    <<: *config-srv
     labels: &soketi-tls-labels
       - traefik.http.routers.soketi.tls=true
     deploy:

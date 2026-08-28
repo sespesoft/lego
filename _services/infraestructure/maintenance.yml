@@ -1,0 +1,18 @@
+services:
+  docker_gc:
+    image: clockworksoul/docker-gc-cron:20240219
+    environment:
+      CRON: "0 3 * * *"
+      MINIMUM_IMAGES_TO_SAVE: "3"
+      GRACE_PERIOD_SECONDS: "3600"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    profiles:
+      - all
+      - infra
+    labels:
+      - service.role=infra
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure

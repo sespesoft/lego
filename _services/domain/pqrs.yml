@@ -63,7 +63,7 @@ services:
       - -c
       - |
         set -e
-        php app/ice dbup --schema=(?!test)* --tag=pqrs
+        php app/ice dbup --schema="(?!test)*" --tag=pqrs
         php app/ice configure-message-queue
     labels:
       - service.role=job

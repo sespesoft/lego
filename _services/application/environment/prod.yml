@@ -4,26 +4,36 @@ x-deploy-app: &deploy-app
   placement:
     constraints:
       - node.role == manager
+x-config-srv: &config-srv
+  loging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
 services:
   grafana:
+    <<: *config-srv
     labels: &grafana-tls-labels
       - traefik.http.routers.grafana.tls=true
     deploy:
       <<: *deploy-app
       labels: *grafana-tls-labels
   superset:
+    <<: *config-srv
     labels: &superset-tls-labels
       - traefik.http.routers.superset.tls=true
     deploy:
       <<: *deploy-app
       labels: *superset-tls-labels
   jasper:
+    <<: *config-srv
     labels: &jasper-tls-labels
       - traefik.http.routers.bi.tls=true
     deploy:
       <<: *deploy-app
       labels: *jasper-tls-labels
   n8n:
+    <<: *config-srv
     labels: &n8n-tls-labels
       - traefik.http.routers.n8n.tls=true
     deploy:
