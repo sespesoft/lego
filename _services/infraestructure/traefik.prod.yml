@@ -5,6 +5,8 @@ services:
     command:
       - --entryPoints.web.address=:80
       - --entryPoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls.certresolver=le
+      - --entrypoints.websecure.asDefault=true
       - --providers.docker=true
       #- --providers.docker.swarmMode=true
       - --providers.docker.exposedByDefault=false
@@ -16,7 +18,6 @@ services:
       - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
       - --entrypoints.web.http.redirections.entrypoint.to=websecure
       - --entryPoints.web.http.redirections.entrypoint.scheme=https
-      - --entrypoints.websecure.asDefault=true
     ports:
       - 80:80
       - 443:443

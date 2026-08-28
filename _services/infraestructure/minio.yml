@@ -49,7 +49,7 @@ services:
     labels:
       - service.role=job
     deploy:
-      mode: replicated
+      mode: replicated-job
       replicas: 1
       restart_policy:
         condition: on-failure

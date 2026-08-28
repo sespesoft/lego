@@ -13,7 +13,7 @@ x-healthcheck-srv: &healthcheck-srv
   start_period: 40s
 x-config-job: &config-job
   deploy:
-    mode: replicated
+    mode: replicated-job
     replicas: 1
     restart_policy:
       condition: on-failure
@@ -24,81 +24,74 @@ services:
   webapp:
     image: ${WEBAPP_IMAGE}
     healthcheck: *healthcheck-srv
+    labels: &webapp-tls-labels
+      - traefik.http.routers.webapp.tls=true
     deploy:
       <<: *deploy-srv
-      labels:
-        - traefik.http.routers.webapp.entrypoints=websecure
-        - traefik.http.routers.webapp.tls=true
-        - traefik.http.routers.webapp.tls.certresolver=le
+      labels: *webapp-tls-labels
   audit:
     image: ${AUDIT_IMAGE}
     healthcheck: *healthcheck-srv
+    labels: &audit-tls-labels
+      - traefik.http.routers.audit.tls=true
     deploy:
       <<: *deploy-srv
-      labels:
-        - traefik.http.routers.audit.entrypoints=websecure
-        - traefik.http.routers.audit.tls=true
-        - traefik.http.routers.audit.tls.certresolver=le
+      labels: *audit-tls-labels
   job_audit:
     image: ${AUDIT_IMAGE}
     <<: *config-job
   auth:
     image: ${AUTH_IMAGE}
     healthcheck: *healthcheck-srv
+    labels: &auth-tls-labels
+      - traefik.http.routers.auth.tls=true
     deploy:
       <<: *deploy-srv
-      labels:
-        - traefik.http.routers.auth.entrypoints=websecure
-        - traefik.http.routers.auth.tls=true
-        - traefik.http.routers.auth.tls.certresolver=le
+      labels: *auth-tls-labels
   job_auth:
     image: ${AUTH_IMAGE}
     <<: *config-job
   geo:
     image: ${CONF_IMAGE}
     healthcheck: *healthcheck-srv
+    labels: &geo-tls-labels
+      - traefik.http.routers.geo.tls=true
     deploy:
       <<: *deploy-srv
-      labels:
-        - traefik.http.routers.geo.entrypoints=websecure
-        - traefik.http.routers.geo.tls=true
-        - traefik.http.routers.geo.tls.certresolver=le
+      labels: *geo-tls-labels
   job_geo:
     image: ${CONF_IMAGE}
     <<: *config-job
   hiring:
     image: ${HIRING_IMAGE}
     healthcheck: *healthcheck-srv
+    labels: &hiring-tls-labels
+      - traefik.http.routers.hiring.tls=true
     deploy:
       <<: *deploy-srv
-      labels:
-        - traefik.http.routers.hiring.entrypoints=websecure
-        - traefik.http.routers.hiring.tls=true
-        - traefik.http.routers.hiring.tls.certresolver=le
+      labels: *hiring-tls-labels
   job_hiring:
     image: ${HIRING_IMAGE}
     <<: *config-job
   pgaudit:
     image: ${PGAUDIT_IMAGE}
     healthcheck: *healthcheck-srv
+    labels: &pga-tls-labels
+      - traefik.http.routers.pga.tls=true
     deploy:
       <<: *deploy-srv
-      labels:
-        - traefik.http.routers.pga.entrypoints=websecure
-        - traefik.http.routers.pga.tls=true
-        - traefik.http.routers.pga.tls.certresolver=le
+      labels: *pga-tls-labels
   job_pgaudit:
     image: ${PGAUDIT_IMAGE}
     <<: *config-job
   pqrs:
     image: ${PQRS_IMAGE}
     healthcheck: *healthcheck-srv
+    labels: &pqrs-tls-labels
+      - traefik.http.routers.pqr.tls=true
     deploy:
       <<: *deploy-srv
-      labels:
-        - traefik.http.routers.pqr.entrypoints=websecure
-        - traefik.http.routers.pqr.tls=true
-        - traefik.http.routers.pqr.tls.certresolver=le
+      labels: *pqrs-tls-labels
   job_pqrs:
     image: ${PQRS_IMAGE}
     <<: *config-job
@@ -108,20 +101,18 @@ services:
       APP_ENV: production
       APP_DEBUG: false
     healthcheck: *healthcheck-srv
+    labels: &notify-tls-labels
+      - traefik.http.routers.notify.tls=true
     deploy:
       <<: *deploy-srv
-      labels:
-        - traefik.http.routers.notify.entrypoints=websecure
-        - traefik.http.routers.notify.tls=true
-        - traefik.http.routers.notify.tls.certresolver=le
+      labels: *notify-tls-labels
   soketi:
     healthcheck: *healthcheck-srv
+    labels: &soketi-tls-labels
+      - traefik.http.routers.soketi.tls=true
     deploy:
       <<: *deploy-srv
-      labels:
-        - traefik.http.routers.soketi.entrypoints=websecure
-        - traefik.http.routers.soketi.tls=true
-        - traefik.http.routers.soketi.tls.certresolver=le
+      labels: *soketi-tls-labels
   job_notify:
     image: ${NOTIFY_IMAGE}
     <<: *config-job

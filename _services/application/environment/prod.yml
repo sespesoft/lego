@@ -6,32 +6,26 @@ x-deploy-app: &deploy-app
       - node.role == manager
 services:
   grafana:
+    labels: &grafana-tls-labels
+      - traefik.http.routers.grafana.tls=true
     deploy:
       <<: *deploy-app
-      labels:
-        - traefik.http.routers.grafana.entrypoints=websecure
-        - traefik.http.routers.grafana.tls=true
-        - traefik.http.routers.grafana.tls.certresolver=le
+      labels: *grafana-tls-labels
   superset:
+    labels: &superset-tls-labels
+      - traefik.http.routers.superset.tls=true
     deploy:
       <<: *deploy-app
-      labels:
-        - traefik.http.routers.superset.entrypoints=websecure
-        - traefik.http.routers.superset.tls=true
-        - traefik.http.routers.superset.tls.certresolver=le
+      labels: *superset-tls-labels
   jasper:
+    labels: &jasper-tls-labels
+      - traefik.http.routers.bi.tls=true
     deploy:
       <<: *deploy-app
-      labels:
-        - traefik.http.routers.bi.entrypoints=websecure
-        - traefik.http.routers.bi.tls=true
-        - traefik.http.routers.bi.tls.certresolver=le
+      labels: *jasper-tls-labels
   n8n:
+    labels: &n8n-tls-labels
+      - traefik.http.routers.n8n.tls=true
     deploy:
       <<: *deploy-app
-      labels:
-        - traefik.http.routers.n8n.entrypoints=websecure
-        - traefik.http.routers.n8n.tls=true
-        - traefik.http.routers.n8n.tls.certresolver=le
-        - traefik.http.middlewares.n8n-headers.headers.customrequestheaders.X-Forwarded-Proto=https
-        - traefik.http.routers.n8n.middlewares=n8n-headers
+      labels: *n8n-tls-labels
