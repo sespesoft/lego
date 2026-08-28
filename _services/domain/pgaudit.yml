@@ -30,7 +30,6 @@ services:
       - traefik.enable=true
       - traefik.http.services.pga.loadbalancer.server.port=80
       - traefik.http.routers.pga.rule=Host(`pgaudit.${DOMAIN}`)
-      - service.role=app
     deploy:
       labels: *pga-labels
 

@@ -45,7 +45,6 @@ services:
       - traefik.enable=true
       - traefik.http.services.auth.loadbalancer.server.port=80
       - traefik.http.routers.auth.rule=Host(`auth.${DOMAIN}`)
-      - service.role=app
     deploy:
       labels: *auth-labels
 

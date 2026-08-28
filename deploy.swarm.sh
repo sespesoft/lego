@@ -8,7 +8,7 @@ set +a
 
 : "${ENV:?ENV no está definido}"
 
-STACK_NAME="${APP_NAME:-sespesoft}-${ENV}"
+STACK_NAME=$(echo "${COMPOSE_PROJECT_NAME:-${PWD##*/}}" | tr 'A-Z' 'a-z')
 
 aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
@@ -21,18 +21,11 @@ else
   echo "${VAR_NAME_TO_UPDATE}=${IMAGE_REF}" >> ".env"
 fi
 
-echo "==> Stack objetivo: ${STACK_NAME} (ENV=${ENV})"
-
-echo "==> Desplegando infraestructura y jobs..."
 docker compose --profile infra --profile job config | \
   docker stack deploy --with-registry-auth -c - "${STACK_NAME}" --detach=false
 
-echo "==> Desplegando aplicación..."
 docker compose --profile app config | \
   docker stack deploy --with-registry-auth -c - "${STACK_NAME}" --detach=false
 
-echo "==> Reconciliando stack completo y limpiando servicios obsoletos..."
 docker compose --profile all config | \
   docker stack deploy --with-registry-auth --prune -c - "${STACK_NAME}"
-
-echo "==> Despliegue completado en el stack '${STACK_NAME}'."

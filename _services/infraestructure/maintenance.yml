@@ -10,8 +10,6 @@ services:
     profiles:
       - all
       - infra
-    labels:
-      - service.role=infra
     deploy:
       mode: global
       restart_policy:

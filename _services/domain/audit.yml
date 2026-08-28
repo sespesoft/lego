@@ -54,7 +54,6 @@ services:
       - traefik.enable=true
       - traefik.http.services.audit.loadbalancer.server.port=80
       - traefik.http.routers.audit.rule=Host(`audit.${DOMAIN}`)
-      - service.role=app
     deploy:
       labels: *audit-labels
 
