@@ -30,18 +30,21 @@ services:
       AWS_DEFAULT_REGION: ${AWS_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_KEY}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
+    restart: unless-stopped
     profiles:
       - all
       - app
     configs:
       - source: pub_key
         target: /rsa/pub/key.pem
-    labels:
+    labels: &notify-labels
       - traefik.enable=true
       - traefik.http.services.notify.loadbalancer.server.port=80
       - traefik.http.routers.notify.priority=10
       - traefik.http.routers.notify.rule=(Host(`notify.${DOMAIN}`) && PathPrefix(`/history`)) || (Host(`notify.${DOMAIN}`) && PathPrefix(`/auth`))
       - service.role=app
+    deploy:
+      labels: *notify-labels
   soketi:
     extends:
       file: ./environment/${ENV}.yml
@@ -55,15 +58,18 @@ services:
       SOKETI_DEFAULT_APP_ID: ${SOKETI_ID}
       SOKETI_DEFAULT_APP_KEY: ${SOKETI_KEY}
       SOKETI_DEFAULT_APP_SECRET: ${SOKETI_SECRET}
+    restart: unless-stopped
     profiles:
       - all
       - app
-    labels:
-        - traefik.enable=true
-        - traefik.http.routers.soketi.rule=Host(`notify.${DOMAIN}`)
-        - traefik.http.routers.soketi.priority=5
-        - traefik.http.services.soketi.loadbalancer.server.port=6001
-        - service.role=app
+    labels: &soketi-labels
+      - traefik.enable=true
+      - traefik.http.routers.soketi.rule=Host(`notify.${DOMAIN}`)
+      - traefik.http.routers.soketi.priority=5
+      - traefik.http.services.soketi.loadbalancer.server.port=6001
+      - service.role=app
+    deploy:
+      labels: *soketi-labels
 
   job_notify:
     extends:
@@ -81,6 +87,7 @@ services:
       AWS_DEFAULT_REGION: ${AWS_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_KEY}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
+    restart: on-failure
     entrypoint: /bin/bash
     user: application
     command:
@@ -91,6 +98,5 @@ services:
     profiles:
       - all
       - job
-    restart: on-failure
     labels:
       - service.role=job

@@ -1,5 +1,4 @@
 x-config-app: &config-app
-  restart: unless-stopped
   depends_on:
     db:
       condition: service_healthy

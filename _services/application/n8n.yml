@@ -17,17 +17,20 @@ services:
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
       DB_SQLITE_POOL_SIZE: 5
       N8N_PROXY_HOPS: 1
+    restart: unless-stopped
     volumes:
       - n8n_data:/home/node/.n8n
       - ./n8n:/files
     profiles:
       - all
       - app
-    labels:
+    labels: &n8n-labels
       - traefik.enable=true
       - traefik.http.routers.n8n.rule=Host(`n8n.${DOMAIN}`)
       - traefik.http.services.n8n.loadbalancer.server.port=5678
       - traefik.http.middlewares.n8n-headers.headers.customrequestheaders.X-Forwarded-Proto=https
       - traefik.http.routers.n8n.middlewares=n8n-headers
+    deploy:
+      labels: *n8n-labels
 volumes:
   n8n_data:

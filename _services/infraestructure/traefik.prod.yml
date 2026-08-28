@@ -6,12 +6,12 @@ services:
       - --entryPoints.web.address=:80
       - --entryPoints.websecure.address=:443
       - --providers.docker=true
+      #- --providers.docker.swarmMode=true
       - --providers.docker.exposedByDefault=false
       - --api.dashboard=false
       - --log.level=INFO
       - --certificatesresolvers.le.acme.email=admin@sespesoft.com
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
-      #- --certificatesresolvers.le.acme.tlschallenge=true
       - --certificatesresolvers.le.acme.httpchallenge=true
       - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
       - --entrypoints.web.http.redirections.entrypoint.to=websecure

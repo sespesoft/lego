@@ -15,12 +15,15 @@ services:
       JASPERREPORTS_DATABASE_PASSWORD: ${BI_DB_PASSWORD}
       JASPERREPORTS_DATABASE_NAME: ${BI_DB_NAME}
       JASPERREPORTS_PASSWORD: ${BI_PASSWORD}
+    restart: unless-stopped
     profiles:
       - all
       - app
-    labels:
+    labels: &jasper-labels
       - traefik.enable=true
       - traefik.http.routers.bi.rule=Host(`bi.${DOMAIN}`)
       - traefik.http.services.bi.loadbalancer.server.port=8080
+    deploy:
+      labels: *jasper-labels
 volumes:
   jasper_data:

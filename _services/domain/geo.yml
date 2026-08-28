@@ -24,11 +24,13 @@ services:
     configs:
       - source: pub_key
         target: /rsa/pub/key.pem
-    labels:
+    labels: &geo-labels
       - traefik.enable=true
       - traefik.http.services.geo.loadbalancer.server.port=80
       - traefik.http.routers.geo.rule=Host(`geo.${DOMAIN}`)
       - service.role=app
+    deploy:
+      labels: *geo-labels
 
   job_geo:
     extends:
@@ -48,6 +50,7 @@ services:
       AWS_DEFAULT_REGION: ${AWS_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_KEY}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
+    restart: on-failure
     profiles:
       - all
       - job
@@ -57,8 +60,7 @@ services:
       - -c 
       - |
         set -e
-        php app/ice dbup --schema=[!t]* --tag=geo
+        php app/ice dbup --schema=(?!test)* --tag=geo
         php app/ice configure-message-queue
-    restart: on-failure
     labels:
       - service.role=job

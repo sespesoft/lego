@@ -41,11 +41,13 @@ services:
     configs:
       - source: pub_key
         target: /rsa/pub/key.pem
-    labels:
+    labels: &auth-labels
       - traefik.enable=true
       - traefik.http.services.auth.loadbalancer.server.port=80
       - traefik.http.routers.auth.rule=Host(`auth.${DOMAIN}`)
       - service.role=app
+    deploy:
+      labels: *auth-labels
 
   job_auth:
     extends:
@@ -65,6 +67,7 @@ services:
       AWS_DEFAULT_REGION: ${AWS_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_KEY}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
+    restart: on-failure
     user: application
     entrypoint: /bin/bash
     profiles:
@@ -76,6 +79,5 @@ services:
         set -e
         php app/ice dbup --schema="{perfiles,(?!test)*}" --tag=auth
         php app/ice configure-message-queue
-    restart: on-failure
     labels:
       - service.role=job

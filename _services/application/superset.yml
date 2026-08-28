@@ -22,19 +22,19 @@ services:
       ADMIN_EMAIL: ${MAIL_USER}
       ADMIN_PASSWORD: ${SS_ADMIN_PASSWORD}
       PYTHONPATH: /app/superset
+    restart: unless-stopped
     profiles:
       - all
       - app
     configs:
       - source: pub_key
         target: /rsa/pub/key.pem
-    restart: unless-stopped
     volumes:
       - superset_data:/app/superset_home
       - ../../_configs/superset_entrypoint.sh:/app/superset_entrypoint.sh
       - ../../_configs/superset_config.py:/app/superset/superset_config.py
     entrypoint: [/app/superset_entrypoint.sh]
-    labels:
+    labels: &superset-labels
       - traefik.enable=true
       - traefik.http.routers.superset.rule=Host(`superset.${DOMAIN}`)
       - traefik.http.services.superset.loadbalancer.server.port=8088
@@ -45,5 +45,7 @@ services:
       - traefik.http.middlewares.superset-cors.headers.accesscontrolmaxage=100
       - traefik.http.middlewares.superset-cors.headers.addvaryheader=true
       - traefik.http.middlewares.superset-cors.headers.accesscontrolallowcredentials=true
+    deploy:
+      labels: *superset-labels
 volumes:
   superset_data:

@@ -20,13 +20,16 @@ services:
     extends:
       file: ./_services/domain/environment/${ENV}.yml
       service: webapp
+    restart: unless-stopped
     profiles:
       - all
       - app
-    labels:
+    labels: &webapp-labels
       - traefik.enable=true
       - traefik.http.services.webapp.loadbalancer.server.port=80
       - traefik.http.routers.webapp.rule=Host(`${DOMAIN}`)
+    deploy:
+      labels: *webapp-labels
 secrets:
   priv_key:
     file: ./_configs/priv.key

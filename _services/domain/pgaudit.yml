@@ -26,11 +26,13 @@ services:
     configs:
       - source: pub_key
         target: /rsa/pub/key.pem
-    labels:
+    labels: &pga-labels
       - traefik.enable=true
       - traefik.http.services.pga.loadbalancer.server.port=80
       - traefik.http.routers.pga.rule=Host(`pgaudit.${DOMAIN}`)
       - service.role=app
+    deploy:
+      labels: *pga-labels
 
   job_pgaudit:
     extends:
@@ -50,6 +52,7 @@ services:
       AWS_DEFAULT_REGION: ${AWS_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_KEY}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
+    restart: on-failure
     user: application
     profiles:
       - all
@@ -59,8 +62,7 @@ services:
       - -c
       - |
         set -e
-        php app/ice dbup --schema=[!t]* --tag=pgaudit
+        php app/ice dbup --schema=(?!test)* --tag=pgaudit
         php app/ice configure-message-queue
-    restart: on-failure
     labels:
       - service.role=job

@@ -1,93 +1,104 @@
-x-config-srv: &config-srv
-  restart: unless-stopped
-  deploy:
-    replicas: 1
-    update_config:
-      parallelism: 1
-      order: start-first
-      failure_action: rollback
-      delay: 10s
-  healthcheck:
-    test: ["CMD", "curl", "-f", "http://localhost"]
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 40s
+x-deploy-srv: &deploy-srv
+  replicas: 1
+  update_config:
+    parallelism: 1
+    order: start-first
+    failure_action: rollback
+    delay: 10s
+x-healthcheck-srv: &healthcheck-srv
+  test: ["CMD", "curl", "-f", "http://localhost"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s
 x-config-job: &config-job
-  restart: on-failure
   deploy:
-      mode: replicated
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-        delay: 15s
-        max_attempts: 5
-        window: 120s
+    mode: replicated
+    replicas: 1
+    restart_policy:
+      condition: on-failure
+      delay: 15s
+      max_attempts: 5
+      window: 120s
 services:
   webapp:
     image: ${WEBAPP_IMAGE}
-    labels:
-      - traefik.http.routers.webapp.entrypoints=websecure
-      - traefik.http.routers.webapp.tls=true
-      - traefik.http.routers.webapp.tls.certresolver=le
-    <<: *config-srv
+    healthcheck: *healthcheck-srv
+    deploy:
+      <<: *deploy-srv
+      labels:
+        - traefik.http.routers.webapp.entrypoints=websecure
+        - traefik.http.routers.webapp.tls=true
+        - traefik.http.routers.webapp.tls.certresolver=le
   audit:
     image: ${AUDIT_IMAGE}
-    labels:
-      - traefik.http.routers.audit.entrypoints=websecure
-      - traefik.http.routers.audit.tls=true
-      - traefik.http.routers.audit.tls.certresolver=le
-    <<: *config-srv
+    healthcheck: *healthcheck-srv
+    deploy:
+      <<: *deploy-srv
+      labels:
+        - traefik.http.routers.audit.entrypoints=websecure
+        - traefik.http.routers.audit.tls=true
+        - traefik.http.routers.audit.tls.certresolver=le
   job_audit:
     image: ${AUDIT_IMAGE}
     <<: *config-job
   auth:
     image: ${AUTH_IMAGE}
-    labels:
-      - traefik.http.routers.auth.entrypoints=websecure
-      - traefik.http.routers.auth.tls=true
-      - traefik.http.routers.auth.tls.certresolver=le
-    <<: *config-srv
+    healthcheck: *healthcheck-srv
+    deploy:
+      <<: *deploy-srv
+      labels:
+        - traefik.http.routers.auth.entrypoints=websecure
+        - traefik.http.routers.auth.tls=true
+        - traefik.http.routers.auth.tls.certresolver=le
   job_auth:
     image: ${AUTH_IMAGE}
     <<: *config-job
   geo:
     image: ${CONF_IMAGE}
-    labels:
-      - traefik.http.routers.geo.entrypoints=websecure
-      - traefik.http.routers.geo.tls=true
-      - traefik.http.routers.geo.tls.certresolver=le
-    <<: *config-srv
+    healthcheck: *healthcheck-srv
+    deploy:
+      <<: *deploy-srv
+      labels:
+        - traefik.http.routers.geo.entrypoints=websecure
+        - traefik.http.routers.geo.tls=true
+        - traefik.http.routers.geo.tls.certresolver=le
   job_geo:
     image: ${CONF_IMAGE}
     <<: *config-job
   hiring:
     image: ${HIRING_IMAGE}
-    labels:
-      - traefik.http.routers.hiring.entrypoints=websecure
-      - traefik.http.routers.hiring.tls=true
-      - traefik.http.routers.hiring.tls.certresolver=le
-    <<: *config-srv
+    healthcheck: *healthcheck-srv
+    deploy:
+      <<: *deploy-srv
+      labels:
+        - traefik.http.routers.hiring.entrypoints=websecure
+        - traefik.http.routers.hiring.tls=true
+        - traefik.http.routers.hiring.tls.certresolver=le
   job_hiring:
     image: ${HIRING_IMAGE}
     <<: *config-job
   pgaudit:
     image: ${PGAUDIT_IMAGE}
-    labels:
-      - traefik.http.routers.pga.entrypoints=websecure
-      - traefik.http.routers.pga.tls=true
-      - traefik.http.routers.pga.tls.certresolver=le
-    <<: *config-srv
+    healthcheck: *healthcheck-srv
+    deploy:
+      <<: *deploy-srv
+      labels:
+        - traefik.http.routers.pga.entrypoints=websecure
+        - traefik.http.routers.pga.tls=true
+        - traefik.http.routers.pga.tls.certresolver=le
   job_pgaudit:
     image: ${PGAUDIT_IMAGE}
     <<: *config-job
   pqrs:
     image: ${PQRS_IMAGE}
-    labels:
-      - traefik.http.routers.pqr.entrypoints=websecure
-      - traefik.http.routers.pqr.tls=true
-      - traefik.http.routers.pqr.tls.certresolver=le
-    <<: *config-srv
+    healthcheck: *healthcheck-srv
+    deploy:
+      <<: *deploy-srv
+      labels:
+        - traefik.http.routers.pqr.entrypoints=websecure
+        - traefik.http.routers.pqr.tls=true
+        - traefik.http.routers.pqr.tls.certresolver=le
   job_pqrs:
     image: ${PQRS_IMAGE}
     <<: *config-job
@@ -96,17 +107,21 @@ services:
     environment:
       APP_ENV: production
       APP_DEBUG: false
-    labels:
-      - traefik.http.routers.notify.entrypoints=websecure
-      - traefik.http.routers.notify.tls=true
-      - traefik.http.routers.notify.tls.certresolver=le
-    <<: *config-srv
+    healthcheck: *healthcheck-srv
+    deploy:
+      <<: *deploy-srv
+      labels:
+        - traefik.http.routers.notify.entrypoints=websecure
+        - traefik.http.routers.notify.tls=true
+        - traefik.http.routers.notify.tls.certresolver=le
   soketi:
-    labels:
-      - traefik.http.routers.soketi.entrypoints=websecure
-      - traefik.http.routers.soketi.tls=true
-      - traefik.http.routers.soketi.tls.certresolver=le
-    <<: *config-srv
+    healthcheck: *healthcheck-srv
+    deploy:
+      <<: *deploy-srv
+      labels:
+        - traefik.http.routers.soketi.entrypoints=websecure
+        - traefik.http.routers.soketi.tls=true
+        - traefik.http.routers.soketi.tls.certresolver=le
   job_notify:
     image: ${NOTIFY_IMAGE}
     <<: *config-job

@@ -1,5 +1,3 @@
-x-config-srv: &config-srv
-  restart: unless-stopped
 x-config-job: &config-job
   restart: on-failure
   depends_on:
@@ -15,7 +13,6 @@ services:
         - assets=../../../_assets
     labels:
       - traefik.http.routers.webapp.entrypoints=web
-    <<: *config-srv
   audit:
     build:
       context: ../../../audit
@@ -24,7 +21,6 @@ services:
     depends_on:
       job_audit:
         condition: service_completed_successfully
-    <<: *config-srv
   job_audit:
     build:
       context: ../../../audit
@@ -37,7 +33,6 @@ services:
     depends_on:
       job_auth:
         condition: service_completed_successfully
-    <<: *config-srv
   job_auth:
     build:
       context: ../../../auth
@@ -50,7 +45,6 @@ services:
     depends_on:
       job_geo:
         condition: service_completed_successfully
-    <<: *config-srv
   job_geo:
     build:
       context: ../../../geo
@@ -63,7 +57,6 @@ services:
     depends_on:
       job_hiring:
         condition: service_completed_successfully
-    <<: *config-srv
   job_hiring:
     build:
       context: ../../../hiring
@@ -76,7 +69,6 @@ services:
     depends_on:
       job_pgaudit:
         condition: service_completed_successfully
-    <<: *config-srv
   job_pgaudit:
     build:
       context: ../../../pgaudit-api
@@ -89,7 +81,6 @@ services:
     depends_on:
       job_pqrs:
         condition: service_completed_successfully
-    <<: *config-srv
   job_pqrs:
     build:
       context: ../../../pqrs
@@ -102,7 +93,6 @@ services:
     depends_on:
       soketi:
         condition: service_started
-    <<: *config-srv
   soketi:
     environment:
       SOKETI_DEBUG: true
@@ -113,7 +103,6 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    <<: *config-srv
   job_notify:
     build:
       context: ../../../notify-soketi
