@@ -25,6 +25,6 @@ services:
       replicas: 1
       placement:
         constraints: 
-          - node.labels.role == infra
+          - node.labels.edge == true
 volumes:
   redis-data:

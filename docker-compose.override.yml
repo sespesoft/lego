@@ -1,0 +1,6 @@
+secrets:
+  priv_key:
+    file: ./_configs/priv.key
+configs:
+  pub_key:
+    file: ./_configs/pub.key

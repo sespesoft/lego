@@ -3,7 +3,10 @@ services:
     container_name: infra-db
     image: postgres:14.1-alpine
     ports:
-      - 127.0.0.1:5432:5432
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
     volumes:
       - pg_data:/var/lib/postgresql/data
       - ../../_configs/db-provision.sh:/docker-entrypoint-initdb.d/db-provision.sh
@@ -36,6 +39,6 @@ services:
       replicas: 1
       placement:
         constraints: 
-          - node.labels.role == infra
+          - node.labels.edge == true
 volumes:
   pg_data:

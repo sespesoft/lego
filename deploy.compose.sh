@@ -1,6 +1,5 @@
 #!/bin/bash
 set -eo pipefail
-cd /home/deployer/lego
 aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
 
 MAX_WAIT_SECONDS=300

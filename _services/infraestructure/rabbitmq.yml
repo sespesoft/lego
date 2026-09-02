@@ -3,7 +3,10 @@ services:
     container_name: infra-rabbitmq
     image: rabbitmq:3.13.6-management-alpine
     ports:
-      - 127.0.0.1:8072:15672
+      - target: 15672
+        published: 8072
+        protocol: tcp
+        mode: host
     environment:
       RABBITMQ_DEFAULT_USER: ${MQ_USER}
       RABBITMQ_DEFAULT_PASS: ${MQ_PASSWORD}
@@ -25,6 +28,6 @@ services:
       replicas: 1
       placement:
         constraints: 
-          - node.labels.role == infra
+          - node.labels.edge == true
 volumes:
   rabbitmq_data:

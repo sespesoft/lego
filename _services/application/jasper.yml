@@ -4,7 +4,7 @@ services:
       file: ./environment/${ENV}.yml
       service: jasper
     container_name: app-jasper
-    image: bitnami/jasperreports-archived:8.2.0-debian-11-r98
+    image: marlonramirez/jasperreports
     volumes:
       - jasper_data:/bitnami/jasperreports
     environment:

@@ -31,12 +31,6 @@ services:
       - traefik.http.routers.webapp.rule=Host(`${DOMAIN}`)
     deploy:
       labels: *webapp-labels
-secrets:
-  priv_key:
-    file: ./_configs/priv.key
-configs:
-  pub_key:
-    file: ./_configs/pub.key
 # networks:
 #  default:
 #    enable_ipv6: true
