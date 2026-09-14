@@ -93,6 +93,8 @@ services:
     depends_on:
       soketi:
         condition: service_started
+      job_notify:
+        condition: service_completed_successfully
   soketi:
     environment:
       SOKETI_DEBUG: true

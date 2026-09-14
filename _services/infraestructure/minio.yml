@@ -1,6 +1,6 @@
 services:
   minio:
-    image: minio/minio:RELEASE.2025-04-22T22-12-26Z-cpuv1
+    image: openvidu/minio:RELEASE.2026-07-17T12-07-51Z-r0
     container_name: infra-minio
     ports:
       - target: 9001

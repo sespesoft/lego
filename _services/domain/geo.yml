@@ -4,6 +4,7 @@ services:
       file: ./environment/${ENV}.yml
       service: geo
     environment:
+      APP_URL: ${PROTOCOL}://${DOMAIN}
       DB_HOST: ${DB_HOST}
       DB_DATABASE: ${DB_NAME}
       DB_USER: ${DB_USER}
