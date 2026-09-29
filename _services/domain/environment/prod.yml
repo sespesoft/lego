@@ -23,9 +23,9 @@ x-config-job: &config-job
     replicas: 1
     restart_policy:
       condition: on-failure
-      delay: 15s
-      max_attempts: 5
-      window: 120s
+      delay: 20s
+      max_attempts: 15
+      window: 320s
 services:
   webapp:
     image: ${WEBAPP_IMAGE}
@@ -126,6 +126,12 @@ services:
       labels: *notify-tls-labels
   soketi:
     <<: *config-srv
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:6001/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     labels: &soketi-tls-labels
       - traefik.http.routers.soketi.tls=true
       - traefik.http.middlewares.soketi-rate-limit.ratelimit.average=100

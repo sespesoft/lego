@@ -15,6 +15,7 @@ services:
       JASPERREPORTS_DATABASE_PASSWORD: ${BI_DB_PASSWORD}
       JASPERREPORTS_DATABASE_NAME: ${BI_DB_NAME}
       JASPERREPORTS_PASSWORD: ${BI_PASSWORD}
+      CATALINA_OPTS: -Xms512m -Xmx1536m -Djava.awt.headless=true
     restart: unless-stopped
     profiles:
       - all

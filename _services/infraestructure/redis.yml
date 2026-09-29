@@ -1,6 +1,6 @@
 services:
   redis:
-    image: 'redis:8.0.3'
+    image: redis:8.10.2
     container_name: infra-redis
     volumes:
       - ../../_configs/redis.conf:/usr/local/etc/redis/redis.conf

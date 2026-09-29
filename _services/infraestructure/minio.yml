@@ -2,6 +2,7 @@ services:
   minio:
     image: openvidu/minio:RELEASE.2026-07-17T12-07-51Z-r0
     container_name: infra-minio
+    user: "0:0"
     ports:
       - target: 9001
         published: 9001
@@ -30,7 +31,7 @@ services:
         constraints:
           - node.labels.edge == true
   job_minio:
-    image: minio/mc
+    image: openvidu/minio-client:RELEASE.2026-09-02T16-12-00Z
     container_name: job-minio
     depends_on:
       minio:
@@ -40,9 +41,9 @@ services:
     entrypoint: >
       /bin/sh -c "
       sleep 5;
-      /usr/bin/mc alias set dockerminio http://minio:9000 ${AWS_KEY} ${AWS_SECRET};
-      /usr/bin/mc mb dockerminio/${BUCKET_NAME};
-      /usr/bin/mc mb dockerminio/loki;
+      mc alias set dockerminio http://minio:9000 ${AWS_KEY} ${AWS_SECRET};
+      mc mb --ignore-existing dockerminio/${BUCKET_NAME};
+      mc mb --ignore-existing dockerminio/loki;
       exit 0;
       "
     profiles:

@@ -6,7 +6,7 @@ services:
     extends:
       file: ./environment/${ENV}.yml
       service: grafana
-    image: grafana/grafana:12.1.0
+    image: grafana/grafana:13.0-slim
     environment:
       GF_SERVER_DOMAIN: grafana.${DOMAIN}
       GF_SERVER_ROOT_URL: ${PROTOCOL}://grafana.${DOMAIN}

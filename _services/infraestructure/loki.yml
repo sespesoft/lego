@@ -1,6 +1,6 @@
 services:
   loki:
-    image: grafana/loki:3.5.3
+    image: grafana/loki:3.7.8
     container_name: infra-loki
     environment:
       AWS_REGION: ${AWS_REGION}

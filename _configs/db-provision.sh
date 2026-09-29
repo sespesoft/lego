@@ -16,6 +16,14 @@ EOSQL
     if ! psql -U "$POSTGRES_USER" -lqt | cut -d \| -f 1 | grep -qw "$db_name"; then
         psql -U "$POSTGRES_USER" -c "CREATE DATABASE \"$db_name\" WITH OWNER = '$owner'"
     fi
+
+    psql -U "$POSTGRES_USER" -d "$db_name" <<-EOSQL
+        CREATE EXTENSION IF NOT EXISTS vector;
+        CREATE EXTENSION IF NOT EXISTS postgis;
+        CREATE EXTENSION IF NOT EXISTS pgaudit;
+        -- CREATE EXTENSION IF NOT EXISTS spock;
+        GRANT ALL ON SCHEMA public TO "$owner";
+EOSQL
 }
 
 create_database_if_not_exists "$APP_DB_NAME" "$APP_DB_USER" "$APP_DB_PASSWORD"
