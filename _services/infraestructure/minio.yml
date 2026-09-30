@@ -43,7 +43,8 @@ services:
       sleep 5;
       mc alias set dockerminio http://minio:9000 ${AWS_KEY} ${AWS_SECRET};
       mc mb --ignore-existing dockerminio/${BUCKET_NAME};
-      mc mb --ignore-existing dockerminio/loki;
+      mc mb --ignore-existing dockerminio/${BUCKET_NAME}-logs;
+      mc mb --ignore-existing dockerminio/${BUCKET_NAME}-backups;
       exit 0;
       "
     profiles:

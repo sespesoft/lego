@@ -3,22 +3,16 @@ services:
     image: grafana/loki:3.7.8
     container_name: infra-loki
     environment:
+      BUCKET_HOST: ${BUCKET_HOST}
+      BUCKET_NAME: ${BUCKET_NAME}
       AWS_REGION: ${AWS_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_KEY}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET}
     volumes:
       - loki_data:/loki
       - ../../_configs/loki.yml:/etc/loki/local-config.yaml:ro
-    entrypoint: /bin/sh
-    command:
-      - -c
-      - |
-        chown -R 10001:10001 /loki
-        /usr/bin/loki -config.file=/etc/loki/local-config.yaml -config.expand-env=true
+    command: -config.file=/etc/loki/local-config.yaml -config.expand-env=true
     restart: unless-stopped
-    depends_on:
-      minio:
-        condition: service_healthy
     profiles:
       - all
       - infra

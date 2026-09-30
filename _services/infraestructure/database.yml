@@ -8,8 +8,9 @@ services:
         protocol: tcp
         mode: host
     volumes:
-      - pg_data:/var/lib/postgresql/data
-      - ../../_configs/db-provision.sh:/docker-entrypoint-initdb.d/db-provision.sh
+      - pg_data:/var/lib/pgsql/18/data
+      - ../../_configs/db-provision.sh:/docker-entrypoint-initdb.d/db-provision.sh:ro
+      - ../../_configs/pgbackrest.conf:/etc/pgbackrest/pgbackrest.conf:ro
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       APP_DB_NAME: ${DB_NAME}
@@ -24,6 +25,18 @@ services:
       SS_DB_NAME: ${SS_DB_NAME}
       SS_DB_USER: ${SS_DB_USER}
       SS_DB_PASSWORD: ${SS_DB_PASSWORD}
+      PGBACKREST_STANZA: main
+      PGBACKREST_REPO1_TYPE: s3
+      PGBACKREST_REPO1_S3_ENDPOINT: ${BUCKET_HOST}
+      PGBACKREST_REPO1_S3_BUCKET: ${BUCKET_NAME}-backups
+      PGBACKREST_REPO1_S3_REGION: ${AWS_REGION}
+      PGBACKREST_REPO1_S3_KEY: ${AWS_KEY}
+      PGBACKREST_REPO1_S3_KEY_SECRET: ${AWS_SECRET}
+      PGBACKREST_REPO1_S3_URI_STYLE: path
+      PGBACKREST_REPO1_PATH: /pgbackrest
+      PGBACKREST_REPO1_RETENTION_FULL: 4
+      PGBACKREST_REPO1_CIPHER_TYPE: aes-256-cbc
+      PGBACKREST_REPO1_CIPHER_PASS: ${BACKUP_ENCRYPTION_PASS}
     restart: unless-stopped
     healthcheck:
       test: [CMD-SHELL, "pg_isready --username=${DB_USER} --dbname=${DB_NAME}"]
@@ -37,6 +50,40 @@ services:
       - shared_preload_libraries=pgaudit
       - -c
       - listen_addresses=*
+      - -c
+      - wal_level=replica
+      - -c
+      - archive_mode=on
+      - -c
+      - archive_command=pgbackrest --stanza=main archive-push %p
+      - -c
+      - max_wal_senders=5
+      - -c
+      - max_replication_slots=5
+    profiles:
+      - all
+      - infra
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: 
+          - node.labels.edge == true
+  backup:
+    image: mcuadros/ofelia
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: daemon --docker
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.full_backup.schedule: "0 0 7 * * 0"
+      ofelia.job-exec.full_backup.container: "infra-db"
+      ofelia.job-exec.full_backup.user: "postgres"
+      ofelia.job-exec.full_backup.command: "sh -c 'pgbackrest --stanza=main --online stanza-create && pgbackrest --stanza=main --type=full backup'"
+      ofelia.job-exec.incr_backup.schedule: "0 0 7 * * 1-6"
+      ofelia.job-exec.incr_backup.container: "infra-db"
+      ofelia.job-exec.incr_backup.user: "postgres"
+      ofelia.job-exec.incr_backup.command: "sh -c 'pgbackrest --stanza=main --online stanza-create && pgbackrest --stanza=main --type=incr backup'"
     profiles:
       - all
       - infra

@@ -33,9 +33,9 @@ storage_config:
     cache_location: /loki/tsdb-shipper-cache
     cache_ttl: 24h
   aws:
-    endpoint: http://minio:9000
+    endpoint: ${BUCKET_HOST}
     region: ${AWS_REGION}
-    bucketnames: loki
+    bucketnames: ${BUCKET_NAME}-logs
     access_key_id: ${AWS_ACCESS_KEY_ID}
     secret_access_key: ${AWS_SECRET_ACCESS_KEY}
     s3forcepathstyle: true
