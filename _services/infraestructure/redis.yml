@@ -3,7 +3,7 @@ services:
     image: redis:8.10.2
     container_name: infra-redis
     volumes:
-      - ../../_configs/redis.conf:/usr/local/etc/redis/redis.conf
+      - ../../_configs/redis.conf:/usr/local/etc/redis/redis.conf:ro
       - redis-data:/data
     command:
       - redis-server

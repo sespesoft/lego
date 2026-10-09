@@ -2,6 +2,7 @@ services:
   db:
     container_name: infra-db
     image: ghcr.io/pgedge/pgedge-postgres:18.6-spock6-standard
+    stop_grace_period: 120s
     ports:
       - target: 5432
         published: 5432
@@ -57,9 +58,17 @@ services:
       - -c
       - archive_command=pgbackrest --stanza=main archive-push %p
       - -c
+      - archive_timeout=300
+      - -c
       - max_wal_senders=5
       - -c
       - max_replication_slots=5
+      - -c
+      - pgaudit.log=write,ddl,role
+      - -c
+      - pgaudit.log_parameter=on
+      - -c
+      - pgaudit.log_relation=on
     profiles:
       - all
       - infra
@@ -69,6 +78,11 @@ services:
       placement:
         constraints: 
           - node.labels.edge == true
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+        max-file: 5
   backup:
     image: mcuadros/ofelia
     volumes:

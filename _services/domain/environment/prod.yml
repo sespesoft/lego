@@ -18,6 +18,8 @@ x-config-srv: &config-srv
       max-size: "10m"
       max-file: "3"
 x-config-job: &config-job
+  environment:
+    ENABLED_MODULES: ${ENABLE_MODULES}
   deploy:
     mode: replicated-job
     replicas: 1
@@ -53,7 +55,6 @@ services:
     <<: *config-job
   auth:
     image: ${AUTH_IMAGE}
-    <<: 
     <<: *config-srv
     labels: &auth-tls-labels
       - traefik.http.routers.auth.tls=true

@@ -7,7 +7,7 @@ services:
       APP_ENV: production
       FRONTEND_URL: ${PROTOCOL}://${DOMAIN}
       LOG_STACK: stderr
-      CACHE_DRIVER: redis
+      CACHE_STORE: redis
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
       REDIS_CLIENT: predis
@@ -48,7 +48,7 @@ services:
     extends:
       file: ./environment/${ENV}.yml
       service: soketi
-    image: 'quay.io/soketi/soketi:latest-16-alpine'
+    image: quay.io/soketi/soketi:1.6.1-16-alpine
     environment:
       SOKETI_ADAPTER_DRIVER: redis
       SOKETI_DB_REDIS_HOST: ${REDIS_HOST}

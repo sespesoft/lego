@@ -14,7 +14,7 @@ services:
       REDIS_HOST: ${REDIS_HOST}
       PATH_PUBLICKEY: ${PUB_KEY}
       SUPERSET_SECRET_KEY: ${SS_SECRET_KEY}
-      RECAPTCHA_PULIC_KEY: ${RECAPTCHA_PUB}
+      RECAPTCHA_PUBLIC_KEY: ${RECAPTCHA_PUB}
       RECAPTCHA_PRIVATE_KEY: ${RECAPTCHA_PRIV}
       ADMIN_USERNAME: admin
       ADMIN_FIRSTNAME: Superset
@@ -31,8 +31,8 @@ services:
         target: /rsa/pub/key.pem
     volumes:
       - superset_data:/app/superset_home
-      - ../../_configs/superset_entrypoint.sh:/app/superset_entrypoint.sh
-      - ../../_configs/superset_config.py:/app/superset/superset_config.py
+      - ../../_configs/superset_entrypoint.sh:/app/superset_entrypoint.sh:ro
+      - ../../_configs/superset_config.py:/app/superset/superset_config.py:ro
     entrypoint: [/app/superset_entrypoint.sh]
     labels: &superset-labels
       - traefik.enable=true

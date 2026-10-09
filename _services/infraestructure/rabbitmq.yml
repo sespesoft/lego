@@ -11,6 +11,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${MQ_USER}
       RABBITMQ_DEFAULT_PASS: ${MQ_PASSWORD}
       RABBITMQ_NODENAME: rabbit@rabbitmq
+      RABBITMQ_ERLANG_COOKIE: ${MQ_COOKIE:-2c1dM4gkh1y3dCpVRnE27TjB}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     restart: unless-stopped

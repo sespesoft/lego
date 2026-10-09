@@ -16,17 +16,24 @@ EOSQL
     if ! psql -U "$POSTGRES_USER" -lqt | cut -d \| -f 1 | grep -qw "$db_name"; then
         psql -U "$POSTGRES_USER" -c "CREATE DATABASE \"$db_name\" WITH OWNER = '$owner'"
     fi
+}
 
-    psql -U "$POSTGRES_USER" -d "$db_name" <<-EOSQL
+if [ -n "$APP_DB_NAME" ]; then
+    create_database_if_not_exists "$APP_DB_NAME" "$APP_DB_USER" "$APP_DB_PASSWORD"
+    psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$APP_DB_NAME" <<-EOSQL
         CREATE EXTENSION IF NOT EXISTS vector;
         CREATE EXTENSION IF NOT EXISTS postgis;
         CREATE EXTENSION IF NOT EXISTS pgaudit;
         -- CREATE EXTENSION IF NOT EXISTS spock;
-        GRANT ALL ON SCHEMA public TO "$owner";
+        GRANT ALL ON SCHEMA public TO "$APP_DB_USER";
 EOSQL
-}
-
-create_database_if_not_exists "$APP_DB_NAME" "$APP_DB_USER" "$APP_DB_PASSWORD"
-create_database_if_not_exists "$BI_DB_NAME" "$BI_DB_USER" "$BI_DB_PASSWORD"
-create_database_if_not_exists "$GF_DB_NAME" "$GF_DB_USER" "$GF_DB_PASSWORD"
-create_database_if_not_exists "$SS_DB_NAME" "$SS_DB_USER" "$SS_DB_PASSWORD"
+fi
+if [ -n "$BI_DB_NAME" ]; then
+    create_database_if_not_exists "$BI_DB_NAME" "$BI_DB_USER" "$BI_DB_PASSWORD"
+fi
+if [ -n "$GF_DB_NAME" ]; then
+    create_database_if_not_exists "$GF_DB_NAME" "$GF_DB_USER" "$GF_DB_PASSWORD"
+fi
+if [ -n "$SS_DB_NAME" ]; then
+    create_database_if_not_exists "$SS_DB_NAME" "$SS_DB_USER" "$SS_DB_PASSWORD"
+fi
